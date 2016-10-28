@@ -7,8 +7,8 @@ px = 0
 py = 0
 qx = 0
 qy = 0
-h_min, s_min, v_min = 0,0,0
-h_max, s_max, v_max = 0,0,0
+h_min, s_min, v_min = 79,108,102
+h_max, s_max, v_max = 90,225,140
 drawing = False
 
 col = np.array([0,0,0])
@@ -57,14 +57,14 @@ def detect_color(imc):
     if drawing==True:
         cv2.rectangle(imc, (px, py), (qx, qy), (0, 0, 255), 1)
 
-    # —ÎF(HSV)‚Ì”ÍˆÍ‚ğ’è‹`
+    # ï¿½ÎF(HSV)ï¿½Ì”ÍˆÍ‚ï¿½ï¿½ï¿½ï¿½`
     green_min = np.array([h_min,s_min,v_min])
     green_max = np.array([h_max,s_max,v_max])
-    # ƒ}ƒXƒN‰æ‘œ‚ğ—p‚¢‚ÄŒ³‰æ‘œ‚©‚çw’è‚µ‚½F‚ğ’Šo
+    # ï¿½}ï¿½Xï¿½Nï¿½æ‘œï¿½ï¿½ï¿½pï¿½ï¿½ï¿½ÄŒï¿½ï¿½æ‘œï¿½ï¿½ï¿½ï¿½ï¿½wï¿½è‚µï¿½ï¿½ï¿½Fï¿½ğ’Šo
     mask_green = cv2.inRange(im_hsv, green_min, green_max)
     im_green = cv2.bitwise_and(imc,imc, mask=mask_green)
     
-    # —ÖŠsŒŸo
+    # ï¿½ÖŠsï¿½ï¿½ï¿½o
     contours, hierarcy = cv2.findContours(mask_green, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     max_area = 0
     for cnt in contours:
