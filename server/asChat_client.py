@@ -1,41 +1,35 @@
-# coding: utf-8
-
-import asyncore
+import asynchat
 import socket
 
-class EchoHandler(asyncore.dispatcher_with_send):
 
-    def handle_read(self):
-        data = self.recv(8192)
-        if data:
-            self.send(data)
+class EchoClient(asynchat.async_chat):
+    ac_in_buffer_size = 64
+    ac_out_buffer_size = 64
 
-class EchoClient(asyncore.dispatcher):
-
-    def __init__(self, host, port):
-        asyncore.dispatcher.__init__(self)
+    def __init__(self, host, port, message):
+        self.message = message
+        self.received_data = []
+        asynchat.async_chat.__init__(self)
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connect((host, port))
-        self.buffer = 'echo_tst'
-
+        return
 
     def handle_connect(self):
-        pass
+        # コマンドを送る
+        self.push('ECHO %d\n' % len(self.message))
+        # データを送る
+        self.push_with_producer(EchoProducer(self.message, buffer_size=self.ac_out_buffer_size))
+        # データがそのまま送り返されるはずなのでデータ長をターミネイタにセットする
+        self.set_terminator(len(self.message))
 
-    def handle_close(self):
-        self.close()
+    def collect_incoming_data(self, data):
+        self.received_data.append(data)
 
-    def handle_read(self):
-        print 'return:' + self.recv(8192)
-        self.handle_close()
-        # やり取り一回分の入力データ（初期値）しか持たないので，消化後に，通信を終了する
+    def found_terminator(self):
+        received_message = ''.join(self.received_data)
+        print received_message
 
-    def writable(self):
-        return bool(self.buffer)
-
-    def handle_write(self):
-        sent = self.send(self.buffer)
-        self.buffer = self.buffer[sent:]
-
-client = EchoClient('10.1.161.1', 5610)
-asyncore.loop()
+class EchoProducer(asynchat.simple_producer):
+    def more(self):
+        response = asynchat.simple_producer.more(self)
+        return response
