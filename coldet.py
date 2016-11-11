@@ -70,6 +70,7 @@ def detect_color(imc):
     # �֊s���o
     contours, hierarcy = cv2.findContours(
         mask_green, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+
     max_area = 0
     for cnt in contours:
         area = cv2.contourArea(cnt)
