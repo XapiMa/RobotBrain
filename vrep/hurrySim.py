@@ -41,7 +41,7 @@ class HurrySim(RoombaSim):
     def turn_angle(self, direction, angle):
         LR_ave = (self.nowR + self.nowL) / 2
         if LR_ave == 0 and self.nowL == 0:
-            param=149#1000という速度をどうにか計算して導出
+            param=118#1000という速度をどうにか計算して導出
             limit = 115*2*3.14159/param*angle/360#(1000という値をどうにか計算して、paramを錬成
             self.drive_direct(-1000*direction*self.right, -1000*direction*self.left)
             time.sleep(limit)
