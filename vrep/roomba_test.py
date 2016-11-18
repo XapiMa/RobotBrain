@@ -1,8 +1,8 @@
-import roombaSim
+import hurrySim
 import time
 import cv2
 
-rmb = roombaSim.RoombaSim()
+rmb = hurrySim.HurrySim()
 
 cv2.namedWindow("camera")
 
@@ -15,7 +15,7 @@ while True:
 
     cv2.imshow("camera", im)
     print x,w
-    
+
     time.sleep(0.1)
 
     if cv2.waitKey(10) > 0:
