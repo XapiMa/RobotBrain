@@ -22,8 +22,8 @@ while True:
         if count ==0:
             x, y, w, h, im = rmb.detect_col("red")
             print x, w
-            time.sleep(0.5)
-            rmb.turn_angle(rmb.right,360)
+            time.sleep(0.1)
+            rmb.turn_around("r",360,60)
             count+=1
 
     time.sleep(0.1)

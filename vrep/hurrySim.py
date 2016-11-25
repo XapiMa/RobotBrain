@@ -24,6 +24,7 @@ class HurrySim(RoombaSim):
         self.nowL = 0
         self.right = -1
         self.left = 1
+        self.direction = 0
 
     def drive_direct(self, vel_right, vel_left):
         super(HurrySim, self).drive_direct(vel_right, vel_left)
@@ -39,20 +40,40 @@ class HurrySim(RoombaSim):
         self.drive_direct(0, 0)
 
     def turn_angle(self, direction, angle):
-        LR_ave = (self.nowR + self.nowL) / 2
-        if LR_ave == 0 and self.nowL == 0:
-            param=275#1000という速度をどうにか計算して導出
-            limit = 115*2*3.14159/param*angle/360#(1000という値をどうにか計算して、paramを錬成
-            self.drive_direct(-1000*direction*self.right, -1000*direction*self.left)
-            time.sleep(limit)
-            self.drive_direct(0,0)
+        if (direction == "r"):
+            self.direction = self.right
+        elif(direction == "l"):
+            self.direction = self.left
+        else:  # 回転方向の指定をミスったら止まる
+            direction = 0
 
-        if direction > 0:  # 右回転
-            self.drive_direct(LR_ave, LR_ave * 2)
+        param = 275  # 1000という速度をどうにか計算して導出
+        # (1000という値をどうにか計算して、paramを錬成
+        limit = 115 * 2 * 3.14159 / param * angle / 360
+        self.drive_direct(-1000 * self.direction * self.right, -
+                          1000 * self.direction * self.left)
+        time.sleep(limit)
+        self.drive_direct(0, 0)
+
+    def turn_around(self, direction, angle, distance):
+        param = 275
+        limit = (distance + 23) * 3.14159 / param
+        self.turn_angle(-1*direction, 90)
+
+        inside = distance / (distance + 23)
+        if(direction == "r"):
+            lSP = inside
+            rSP = 1
+        elif(direction == "l"):
+            lSP = 1
+            rSP = inside
         else:
-            self.drive_direct(LR_ave * 2, LR_ave)
+            lSP = 0
+            rSP = 0
 
-
+        self.drive_direct(1000 * rSP, 1000 * lSP)
+        time.sleep(limit)
+        self.drive_direct(0, 0)
 
     def detect_col(self, sColor):
 
