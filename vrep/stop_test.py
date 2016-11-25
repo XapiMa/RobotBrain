@@ -1,7 +1,7 @@
 import hurrySim
 import time
 import cv2
-
+##mm
 rmb = hurrySim.HurrySim()
 
 cv2.namedWindow("camera")
