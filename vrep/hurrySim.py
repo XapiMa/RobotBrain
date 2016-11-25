@@ -7,7 +7,7 @@
 # import time
 # import numpy as np
 from roombaSim import *
-# タイヤ間の距離23cm
+# タイヤ間の距離230mm
 
 
 class HurrySim(RoombaSim):
@@ -57,16 +57,17 @@ class HurrySim(RoombaSim):
 
     def turn_around(self, direction, angle, distance):
         param = 275
-        limit = (distance + 23) * 3.14159 / param
+        limit = (distance + 230) * 3.14159 / param
         self.turn_angle(-1*direction, 90)
-
+	time.stop(0.1)
+	print limit
         inside = distance / (distance + 23)
         if(direction == "r"):
-            lSP = inside
-            rSP = 1
+            lSP = 1 
+            rSP = inside 
         elif(direction == "l"):
-            lSP = 1
-            rSP = inside
+            lSP = inside 
+            rSP = 1
         else:
             lSP = 0
             rSP = 0
