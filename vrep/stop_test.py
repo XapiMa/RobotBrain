@@ -1,7 +1,7 @@
 import hurrySim
 import time
 import cv2
-
+##mm
 rmb = hurrySim.HurrySim()
 
 cv2.namedWindow("camera")
@@ -23,7 +23,7 @@ while True:
             x, y, w, h, im = rmb.detect_col("red")
             print x, w
             time.sleep(0.1)
-            rmb.turn_around("r",360,60)
+            rmb.turn_around("r",360,600)
             count+=1
 
     time.sleep(0.1)

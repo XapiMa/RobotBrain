@@ -57,10 +57,11 @@ class HurrySim(RoombaSim):
 
     def turn_around(self, direction, angle, distance):
         param = 275
-        limit = (distance + 23) * 3.14159 / param
+        limit = (distance + 230) * 3.14159 / param
         self.turn_angle(-1*direction, 90)
 
-        inside = distance / (distance + 23)
+        inside = distance / (distance + 23.0)
+        print inside
         if(direction == "r"):
             lSP = inside
             rSP = 1
@@ -70,8 +71,9 @@ class HurrySim(RoombaSim):
         else:
             lSP = 0
             rSP = 0
+        print lSP
 
-        self.drive_direct(1000 * rSP, 1000 * lSP)
+        self.drive_direct(1000.0 * rSP, 1000.0 * lSP)
         time.sleep(limit)
         self.drive_direct(0, 0)
 
