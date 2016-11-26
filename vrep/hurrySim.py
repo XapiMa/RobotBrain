@@ -7,7 +7,7 @@
 # import time
 # import numpy as np
 from roombaSim import *
-# タイヤ間の距離23cm
+# タイヤ間の距離230mm
 
 right = -1
 left = 1
@@ -28,7 +28,7 @@ class HurrySim(RoombaSim):
         # self.right = -1
         # self.left = 1
         self.direction = 0
-        self.param=160/1000.0#速度mm/sを現実時刻から仮想環境内の時刻に調整するパラメータ．学内Macなら275/1000が妥当．
+        self.param = 160 / 1000.0  # 速度mm/sを現実時刻から仮想環境内の時刻に調整するパラメータ．学内Macなら275/1000が妥当．
 
     def drive_direct(self, vel_right, vel_left):
         super(HurrySim, self).drive_direct(vel_right, vel_left)
@@ -44,7 +44,7 @@ class HurrySim(RoombaSim):
         self.quick_stop()
 
     def quick_stop(self):
-        self.drive_direct(0,0)
+        self.drive_direct(0, 0)
 
     def turn_angle(self, direction, angle):
         # if (direction == "r"):
@@ -54,14 +54,14 @@ class HurrySim(RoombaSim):
         # else:  # 回転方向の指定をミスったら止まる
         #     direction = 0
 
-        limit = 115 * 2 * 3.14159 / (1000*self.param) * angle / 360
+        limit = 115 * 2 * 3.14159 / (1000 * self.param) * angle / 360
         self.drive_direct(-1000 * direction * right, -1000 * direction * left)
         time.sleep(limit)
         # print "回転時間(angle):",limit
         self.quick_stop()
 
     def turn_around(self, direction, angle, distance):
-        limit = (distance + 230) * 2 * 3.14159 / (1000*self.param)
+        limit = (distance + 230) * 2 * 3.14159 / (1000 * self.param)
 
         self.turn_angle(-1 * direction, 90)
 
@@ -75,6 +75,7 @@ class HurrySim(RoombaSim):
             lSP = inside
             rSP = 1
             # self.turn_angle("r", 90)
+
         else:
             lSP = 0
             rSP = 0
