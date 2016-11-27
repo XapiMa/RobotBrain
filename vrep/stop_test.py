@@ -30,7 +30,7 @@ while True:
             time.sleep(0.1)
             rmb.turn_color("red")
             # rmb.turn_angle("r",360)
-            rmb.turn_around(right,360,600)
+            rmb.turn_around(right,270,600)
             rmb.turn_color("blue")
             rmb.drive_direct(500,500)
             while True:
