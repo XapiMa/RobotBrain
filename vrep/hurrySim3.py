@@ -16,12 +16,12 @@ SPAN = 200
 
 class HurrySim(RoombaSim):
 
-    def __init__(self, name):
+    def __init__(self, name,param):
         super(HurrySim, self).__init__()
         self.now_R = 0
         self.now_L = 0
         self.direction = 0
-        self.param = 100 / 1000.0  # 速度mm/sを現実時刻から仮想環境内の時刻に調整するパラメータ．学内Macなら275/1000が妥当．
+        self.param = param / 1000.0  # 速度mm/sを現実時刻から仮想環境内の時刻に調整するパラメータ．学内Macなら275/1000が妥当．
         self.speed = 500
         self.im=None
         self.name = name
@@ -101,7 +101,10 @@ class HurrySim(RoombaSim):
             rSP = 0
 
         self.drive_direct(self.speed * rSP, self.speed * lSP)
-        time.sleep(limit)
+        for i in range(10):
+            xa1, xa2, xb1, xb2 = self.line_pos(400, 450, 200, None)
+            print xa1, xa2, xb1, xb2
+            time.sleep(limit/10.0)
         # self.quick_stop()
 
     def turn_around(self, direction, angle, distance):

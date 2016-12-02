@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-
+import sys
 import hurrySim3
 import time
 import cv2
 
-rmb = hurrySim3.HurrySim("rmb")
+param =float(sys.argv[1])
+rmb = hurrySim3.HurrySim("rmb",param)
 
 # 本当はrmb.go()を呼び出すだけで済ませたい．しかし，rmb.go()を実行してもうまくcv2の画面表示ができない．
 
