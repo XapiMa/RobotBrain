@@ -133,25 +133,47 @@ class HurrySim(RoombaSim):
 
             if im != None:
                 cv2.imshow("camera", im)
-                cv2.waitKey(0)
+                cv2.waitKey(10)
 
             if xb1 == -1:
-                self.turn_left_course()
+                b1_count += 1
+                if b1_count >= 2:
+                    print "turn_left_course"
+                    cv2.waitKey(100)
+                    rmb.turn_left_course()
+                    cv2.waitKey(100)
+                    b1_count = 0
+                xa1, xa2, xb1, xb2, im = rmb.line_pos(400, 450, 200, None)
+                print xa1, xa2, xb1, xb2
+                continue
             elif xb2 == -1:
-                self.turn_right_course()
-            elif xa1 <= 68 and xa2 <= 462:
-                self.adjust_left()
-            elif xa1 >= 68 and xa2 >= 462:
-                self.adjust_right()
+                b2_count += 1
+                if b2_count >= 2:
+                    print "turn_right_course"
+                    cv2.waitKey(100)
+                    rmb.turn_right_course()
+                    cv2.waitKey(100)
+                    b2_count = 0
+                xa1, xa2, xb1, xb2, im = rmb.line_pos(400, 450, 200, None)
+                print xa1, xa2, xb1, xb2
+                continue
+            elif xa1 < 68 and xa2 < 462:
+                print "adjust_right"
+                rmb.adjust_right()
+                continue
+            elif xa1 > 68 and xa2 > 462:
+                print "adjust_left"
+                rmb.adjust_left()
+                continue
             else:
-                self.drive_direct(self.speed, self.speed)
-            time.sleep(0.01)
+                print "go_straight"
+                rmb.drive_direct(rmb.speed, rmb.speed)
 
     def turn_right_course(self):
-        self.turn(RIGHT,90,150)
+        self.turn(RIGHT, 90, 150)
 
     def turn_left_course(self):
-        self.turn(LEFT,90,150)
+        self.turn(LEFT, 90, 150)
 
     def adjust(self, direction):
         self.drive_direct(self.speed - 2 * RIGHT * direction,
