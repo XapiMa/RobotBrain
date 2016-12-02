@@ -166,10 +166,10 @@ class HurrySim(RoombaSim):
             time.sleep(0.01)
 
     def turn_right_course(self):
-        self.turn(RIGHT, 85, 150)
+        self.turn(RIGHT, 85, 100)
 
     def turn_left_course(self):
-        self.turn(LEFT, 85, 150)
+        self.turn(LEFT, 85, 100)
 
     def adjust(self, direction):
         self.drive_direct(self.speed - 2 * RIGHT * direction,
