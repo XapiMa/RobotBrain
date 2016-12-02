@@ -133,6 +133,7 @@ class HurrySim(RoombaSim):
 
             if im != None:
                 cv2.imshow("camera", im)
+                cv2.waitKey(0)
 
             if xb1 == -1:
                 self.turn_left_course()

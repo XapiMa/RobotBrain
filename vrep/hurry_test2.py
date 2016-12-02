@@ -18,14 +18,15 @@ while True:
 
     if im != None:
         cv2.imshow("camera", im)
+        cv2.waitKey(10)
 
     if xb1 == -1:
         b1_count += 1
         if b1_count >= 2:
             print "turn_left_course"
-            time.sleep(0.1)
+            cv2.waitKey(100)
             rmb.turn_left_course()
-            time.sleep(0.1)
+            cv2.waitKey(100)
             b1_count = 0
         xa1, xa2, xb1, xb2, im = rmb.line_pos(400, 450, 200, None)
         print xa1, xa2, xb1, xb2
@@ -34,9 +35,9 @@ while True:
         b2_count += 1
         if b2_count >= 2:
             print "turn_right_course"
-            time.sleep(0.1)
+            cv2.waitKey(100)
             rmb.turn_right_course()
-            time.sleep(0.1)
+            cv2.waitKey(100)
             b2_count = 0
         xa1, xa2, xb1, xb2, im = rmb.line_pos(400, 450, 200, None)
         print xa1, xa2, xb1, xb2
