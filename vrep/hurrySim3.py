@@ -101,10 +101,10 @@ class HurrySim(RoombaSim):
             rSP = 0
 
         self.drive_direct(self.speed * rSP, self.speed * lSP)
-        for i in range(10):
+        for i in range(100):
             xa1, xa2, xb1, xb2 = self.line_pos(400, 450, 200, None)
             print xa1, xa2, xb1, xb2
-            time.sleep(limit/10.0)
+            time.sleep(limit/100.0)
         # self.quick_stop()
 
     def turn_around(self, direction, angle, distance):
@@ -141,23 +141,17 @@ class HurrySim(RoombaSim):
             print xa1, xa2, xb1, xb2
 
             if xb1 == -1:
-                b1_count += 1
-                if b1_count >= 2:
-                    print "turn_left_course"
-                    time.sleep(0.1)
-                    self.turn_left_course()
-                    time.sleep(0.1)
-                    b1_count = 0
+                print "turn_left_course"
+                self.turn_left_course()
+                time.sleep(0.1)
+                b1_count = 0
                 xa1, xa2, xb1, xb2 = self.line_pos(400, 450, 200, None)
                 print xa1, xa2, xb1, xb2
             elif xb2 == -1:
-                b2_count += 1
-                if b2_count >= 2:
-                    print "turn_right_course"
-                    time.sleep(0.1)
-                    self.turn_right_course()
-                    time.sleep(0.1)
-                    b2_count = 0
+                print "turn_right_course"
+                self.turn_right_course()
+                time.sleep(0.1)
+                b2_count = 0
                 xa1, xa2, xb1, xb2 = self.line_pos(400, 450, 200, None)
                 print xa1, xa2, xb1, xb2
             elif xa1 < 68 and xa2 < 462:
@@ -172,10 +166,10 @@ class HurrySim(RoombaSim):
             time.sleep(0.01)
 
     def turn_right_course(self):
-        self.turn(RIGHT, 90, 150)
+        self.turn(RIGHT, 85, 150)
 
     def turn_left_course(self):
-        self.turn(LEFT, 90, 150)
+        self.turn(LEFT, 85, 150)
 
     def adjust(self, direction):
         self.drive_direct(self.speed - 2 * RIGHT * direction,
