@@ -9,6 +9,8 @@
 from roombaSimAPI2 import *
 # タイヤ間の距離23cm
 
+#時間での管理を諦め、画像での管理に専念する
+
 RIGHT = -1
 LEFT = 1
 SPAN = 200
@@ -16,14 +18,16 @@ SPAN = 200
 
 class HurrySim(RoombaSim):
 
-    def __init__(self, name,param):
+    def __init__(self, name, param):
         super(HurrySim, self).__init__()
         self.now_R = 0
         self.now_L = 0
         self.direction = 0
         self.param = param / 1000.0  # 速度mm/sを現実時刻から仮想環境内の時刻に調整するパラメータ．学内Macなら275/1000が妥当．
         self.speed = 500
-        self.im=None
+        self.im = None
+        self.im_h = 0
+        self.im_w = 0
         self.name = name
         cv2.namedWindow(self.name)
         self.recognize_line()
@@ -33,8 +37,8 @@ class HurrySim(RoombaSim):
         cv2.waitKey(1)
 
     def recognize_line(self):
-        xa1, xa2, xb1, xb2 = self.line_pos(150, 200, 200, None)
-        print xa1, xa2, xb1, xb2
+        xa1, xa2, xb1, xb2 = self.line_pos(200, 350, 200, None)
+        print xa1, xa2, xb1, xb2, self.im_w
         return xa1, xa2, xb1, xb2
 
     def step_speed(self, after_R, after_L, span):  # spanに慣性力でPCが落下しない最大加速度((mm/s)/s)/10を入力
@@ -69,6 +73,14 @@ class HurrySim(RoombaSim):
         super(HurrySim, self).drive_direct(vel_right, vel_left)
         self.now_R = vel_right
         self.now_L = vel_left
+        if(vel_right > 500):
+            self.now_R = 500
+        elif(vel_right < -500):
+            self.now_R = -500
+        if(vel_left > 500):
+            self.now_L = 500
+        elif(vel_left < -500):
+            self.now_L = -500
 
     def slow_stop(self):
         self.step_speed(0, 0, SPAN)
@@ -108,7 +120,7 @@ class HurrySim(RoombaSim):
         self.drive_direct(self.speed * rSP, self.speed * lSP)
         for i in range(10):
             self.recognize_line()
-            time.sleep(limit/11.0)
+            time.sleep(limit / 11.0)
         # self.quick_stop()
 
     def turn_around(self, direction, angle, distance):
@@ -139,6 +151,8 @@ class HurrySim(RoombaSim):
                 x, y, w, h = self.detect_col(sColor)
             # self.quick_stop()
 
+        # def turn_line(self):
+
     def go(self):
         while True:
             xa1, xa2, xb1, xb2 = self.recognize_line()
@@ -156,15 +170,9 @@ class HurrySim(RoombaSim):
                 time.sleep(0.1)
                 b2_count = 0
                 self.recognize_line()
-            elif xa1 < 97 and xa2 < 430:
-                print "adjust_right"
-                self.adjust_right()
-            elif xa1 > 97 and xa2 > 430:
-                print "adjust_left"
-                self.adjust_left()
             else:
-                print "go_straight"
-                self.drive_direct(self.speed, self.speed)
+                self.front(xa1, xa2)
+
             time.sleep(0.01)
 
     def turn_right_course(self):
@@ -174,14 +182,29 @@ class HurrySim(RoombaSim):
         self.turn(LEFT, 85, 100)
 
     def adjust(self, direction):
-        self.drive_direct(self.speed - 2 * RIGHT * direction,
-                          self.speed - 2 * LEFT * direction)
+        self.drive_direct(self.speed - 30 - 30 * RIGHT * direction,
+                          self.speed - 30 - 30 * LEFT * direction)
 
-    def adjust_right(self):
-        self.adjust(RIGHT)
+    def front(self, xb1, xb2):
+        # 手前の線で直進を判断
+        # if (xa1 < self.im_w-xa2):
+        if xb1 > 96 or xb2 > 429:
+            print "adjust_left"
+            self.adjust(LEFT)
+        # elif (xa1 > self.im_w-xa2):
+        elif xb1 < 96 or xb2 < 492:
+            print "adjust_right"
+            self.adjust(RIGHT)
+        else:
+            print "go_straight"
+            self.drive_direct(self.speed, self.speed)
 
-    def adjust_left(self):
-        self.adjust(LEFT)
+    def turn_corner(self):
+        if line_w():
+            if xa1<0:
+                #左に曲がる
+            elif xa2<0:
+                #右に曲がる
 
     def line_pos(self, ya, yb, thd, im=None):
         errorCode, resolution, image = vrep.simxGetVisionSensorImage(
@@ -233,7 +256,8 @@ class HurrySim(RoombaSim):
                 cv2.circle(image, (xb1, yb), 10, 100, -1)
             if xb2 != -1:
                 cv2.circle(image, (xb2, yb), 10, 100, -1)
-
+            self.im_h = image.shape[0]
+            self.im_w = image.shape[1]
             self.im = image
             self.show_im()
 
@@ -241,6 +265,10 @@ class HurrySim(RoombaSim):
 
         else:
             return -2, -2, -2, -2
+
+def line_w(self):
+    #曲がると判断する位置に横線があればTrueを、なければFalseを返す
+    return True
 
 
 def detect_col(self, col):
