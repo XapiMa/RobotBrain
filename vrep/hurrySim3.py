@@ -33,7 +33,7 @@ class HurrySim(RoombaSim):
         cv2.waitKey(1)
 
     def recognize_line(self):
-        xa1, xa2, xb1, xb2 = self.line_pos(350, 400, 200, None)
+        xa1, xa2, xb1, xb2 = self.line_pos(150, 200, 200, None)
         print xa1, xa2, xb1, xb2
         return xa1, xa2, xb1, xb2
 
@@ -106,9 +106,9 @@ class HurrySim(RoombaSim):
             rSP = 0
 
         self.drive_direct(self.speed * rSP, self.speed * lSP)
-        for i in range(100):
+        for i in range(10):
             self.recognize_line()
-            time.sleep(limit/100.0)
+            time.sleep(limit/11.0)
         # self.quick_stop()
 
     def turn_around(self, direction, angle, distance):
@@ -144,14 +144,14 @@ class HurrySim(RoombaSim):
             xa1, xa2, xb1, xb2 = self.recognize_line()
             if xb1 == -1:
                 print "turn_left_course"
-                time.sleep(1)
+                time.sleep(2)
                 self.turn_left_course()
                 time.sleep(0.1)
                 b1_count = 0
                 self.recognize_line()
             elif xb2 == -1:
                 print "turn_right_course"
-                time.sleep(1)
+                time.sleep(2)
                 self.turn_right_course()
                 time.sleep(0.1)
                 b2_count = 0
