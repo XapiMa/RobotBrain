@@ -26,11 +26,16 @@ class HurrySim(RoombaSim):
         self.im=None
         self.name = name
         cv2.namedWindow(self.name)
-        xa1, xa2, xb1, xb2 = self.line_pos(400, 450, 200, None)
+        self.recognize_line()
 
     def show_im(self):
         cv2.imshow(self.name, self.im)
         cv2.waitKey(1)
+
+    def recognize_line(self):
+        xa1, xa2, xb1, xb2 = self.line_pos(150, 200, 200, None)
+        print xa1, xa2, xb1, xb2
+        return xa1, xa2, xb1, xb2
 
     def step_speed(self, after_R, after_L, span):  # spanに慣性力でPCが落下しない最大加速度((mm/s)/s)/10を入力
         step_R = abs(self.now_R - after_R) / span
@@ -101,10 +106,9 @@ class HurrySim(RoombaSim):
             rSP = 0
 
         self.drive_direct(self.speed * rSP, self.speed * lSP)
-        for i in range(100):
-            xa1, xa2, xb1, xb2 = self.line_pos(400, 450, 200, None)
-            print xa1, xa2, xb1, xb2
-            time.sleep(limit/100.0)
+        for i in range(10):
+            self.recognize_line()
+            time.sleep(limit/11.0)
         # self.quick_stop()
 
     def turn_around(self, direction, angle, distance):
@@ -137,27 +141,25 @@ class HurrySim(RoombaSim):
 
     def go(self):
         while True:
-            xa1, xa2, xb1, xb2 = self.line_pos(400, 450, 200, None)
-            print xa1, xa2, xb1, xb2
-
+            xa1, xa2, xb1, xb2 = self.recognize_line()
             if xb1 == -1:
                 print "turn_left_course"
+                time.sleep(2)
                 self.turn_left_course()
                 time.sleep(0.1)
                 b1_count = 0
-                xa1, xa2, xb1, xb2 = self.line_pos(400, 450, 200, None)
-                print xa1, xa2, xb1, xb2
+                self.recognize_line()
             elif xb2 == -1:
                 print "turn_right_course"
+                time.sleep(2)
                 self.turn_right_course()
                 time.sleep(0.1)
                 b2_count = 0
-                xa1, xa2, xb1, xb2 = self.line_pos(400, 450, 200, None)
-                print xa1, xa2, xb1, xb2
-            elif xa1 < 68 and xa2 < 462:
+                self.recognize_line()
+            elif xa1 < 97 and xa2 < 430:
                 print "adjust_right"
                 self.adjust_right()
-            elif xa1 > 68 and xa2 > 462:
+            elif xa1 > 97 and xa2 > 430:
                 print "adjust_left"
                 self.adjust_left()
             else:
