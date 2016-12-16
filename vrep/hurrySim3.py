@@ -174,14 +174,33 @@ class HurrySim(RoombaSim):
         self.turn(LEFT, 85, 100)
 
     def adjust(self, direction):
-        self.drive_direct(self.speed - 2 * RIGHT * direction,
-                          self.speed - 2 * LEFT * direction)
+        self.drive_direct(self.speed - 30 - 30 * RIGHT * direction,
+                          self.speed - 30 - 30 * LEFT * direction)
 
-    def adjust_right(self):
-        self.adjust(RIGHT)
+    def front(self, xb1, xb2):
+        # 手前の線で直進を判断
+        # if (xa1 < self.im_w-xa2):
+        if xb1 > 96 or xb2 > 429:
+            print "adjust_left"
+            self.adjust(LEFT)
+        # elif (xa1 > self.im_w-xa2):
+        elif xb1 < 96 or xb2 < 492:
+            print "adjust_right"
+            self.adjust(RIGHT)
+        else:
+            print "go_straight"
+            self.drive_direct(self.speed, self.speed)
 
-    def adjust_left(self):
-        self.adjust(LEFT)
+    def turn_corner(self, xa1, xa2):
+        if line_w():
+            if xa1 < 0:
+                # 左に曲がる
+            elif xa2 < 0:
+                # 右に曲がる
+
+    def line_w(self):
+        # 曲がると判断する位置に横線があればTrueを、なければFalseを返す
+        return True
 
     def line_pos(self, ya, yb, thd, im=None):
         errorCode, resolution, image = vrep.simxGetVisionSensorImage(
