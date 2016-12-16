@@ -35,7 +35,7 @@ class HurrySim(RoombaSim):
         cv2.waitKey(1)
 
     def recognize_line(self):
-        xa1, xa2, xb1, xb2 = self.line_pos(200, 250, 200, None)
+        xa1, xa2, xb1, xb2 = self.line_pos(200, 300, 200, None)
         print xa1, xa2, xb1, xb2
         return xa1, xa2, xb1, xb2
 
@@ -144,7 +144,8 @@ class HurrySim(RoombaSim):
     def go(self):
         while True:
             xa1, xa2, xb1, xb2 = self.recognize_line()
-            self.front(xa1, xa2)
+            self.front(xb1, xb2)
+            self.turn_corner(xa1,xa2)
             # if xb1 == -1:
             #     print "turn_left_course"
             #     time.sleep(2)
@@ -180,13 +181,13 @@ class HurrySim(RoombaSim):
         self.drive_direct(self.speed - 30 - 30 * RIGHT * direction,
                           self.speed - 30 - 30 * LEFT * direction)
 
-    def front(self, xa1, xa2):
+    def front(self, xb1, xb2):
         # 手前の線で直進を判断
-        if (xa1 < self.im_w - xa2):
+        if (xb1 < self.im_w - xb2):
             # if xb1 > 96 or xb2 > 429:
             print "adjust_left"
             self.adjust(LEFT)
-        elif (xa1 > self.im_w - xa2):
+        elif (xb1 > self.im_w - xb2):
             # elif xb1 < 96 or xb2 < 492:
             print "adjust_right"
             self.adjust(RIGHT)
@@ -195,13 +196,16 @@ class HurrySim(RoombaSim):
             self.drive_direct(self.speed, self.speed)
 
     def turn_corner(self, xa1, xa2):
-        if line_w():
+        if self.line_w():
             if xa1 < 0:
                 # 左に曲がる
+                self.turn_left_course()
+
                 pass
             elif xa2 < 0:
                 pass
                 # 右に曲がる
+                self.turn_right_course()
 
     def line_w(self):
         # 曲がると判断する位置に横線があればTrueを、なければFalseを返す
