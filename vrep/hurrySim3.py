@@ -16,14 +16,14 @@ SPAN = 200
 
 class HurrySim(RoombaSim):
 
-    def __init__(self, name,param):
+    def __init__(self, name, param):
         super(HurrySim, self).__init__()
         self.now_R = 0
         self.now_L = 0
         self.direction = 0
         self.param = param / 1000.0  # 速度mm/sを現実時刻から仮想環境内の時刻に調整するパラメータ．学内Macなら275/1000が妥当．
         self.speed = 500
-        self.im=None
+        self.im = None
         self.name = name
         cv2.namedWindow(self.name)
         self.recognize_line()
@@ -33,7 +33,7 @@ class HurrySim(RoombaSim):
         cv2.waitKey(1)
 
     def recognize_line(self):
-        xa1, xa2, xb1, xb2 = self.line_pos(200,250,200, None)
+        xa1, xa2, xb1, xb2 = self.line_pos(200, 250, 200, None)
         print xa1, xa2, xb1, xb2
         return xa1, xa2, xb1, xb2
 
@@ -108,7 +108,7 @@ class HurrySim(RoombaSim):
         self.drive_direct(self.speed * rSP, self.speed * lSP)
         for i in range(10):
             self.recognize_line()
-            time.sleep(limit/11.0)
+            time.sleep(limit / 11.0)
         # self.quick_stop()
 
     def turn_around(self, direction, angle, distance):
