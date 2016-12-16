@@ -25,6 +25,8 @@ class HurrySim(RoombaSim):
         self.speed = 500
         self.im = None
         self.name = name
+        self.im_h=0
+        self.im_w=0
         cv2.namedWindow(self.name)
         self.recognize_line()
 
@@ -142,29 +144,30 @@ class HurrySim(RoombaSim):
     def go(self):
         while True:
             xa1, xa2, xb1, xb2 = self.recognize_line()
-            if xb1 == -1:
-                print "turn_left_course"
-                time.sleep(2)
-                self.turn_left_course()
-                time.sleep(0.1)
-                b1_count = 0
-                self.recognize_line()
-            elif xb2 == -1:
-                print "turn_right_course"
-                time.sleep(2)
-                self.turn_right_course()
-                time.sleep(0.1)
-                b2_count = 0
-                self.recognize_line()
-            elif xa1 < 97 and xa2 < 430:
-                print "adjust_right"
-                self.adjust_right()
-            elif xa1 > 97 and xa2 > 430:
-                print "adjust_left"
-                self.adjust_left()
-            else:
-                print "go_straight"
-                self.drive_direct(self.speed, self.speed)
+            self.front(xa1, xa2)
+            # if xb1 == -1:
+            #     print "turn_left_course"
+            #     time.sleep(2)
+            #     self.turn_left_course()
+            #     time.sleep(0.1)
+            #     b1_count = 0
+            #     self.recognize_line()
+            # elif xb2 == -1:
+            #     print "turn_right_course"
+            #     time.sleep(2)
+            #     self.turn_right_course()
+            #     time.sleep(0.1)
+            #     b2_count = 0
+            #     self.recognize_line()
+            # elif xa1 < 97 and xa2 < 430:
+            #     print "adjust_right"
+            #     self.adjust_right()
+            # elif xa1 > 97 and xa2 > 430:
+            #     print "adjust_left"
+            #     self.adjust_left()
+            # else:
+            #     print "go_straight"
+            #     self.drive_direct(self.speed, self.speed)
             time.sleep(0.01)
 
     def turn_right_course(self):
@@ -177,14 +180,14 @@ class HurrySim(RoombaSim):
         self.drive_direct(self.speed - 30 - 30 * RIGHT * direction,
                           self.speed - 30 - 30 * LEFT * direction)
 
-    def front(self, xb1, xb2):
+    def front(self, xa1, xa2):
         # 手前の線で直進を判断
-        # if (xa1 < self.im_w-xa2):
-        if xb1 > 96 or xb2 > 429:
+        if (xa1 < self.im_w - xa2):
+            # if xb1 > 96 or xb2 > 429:
             print "adjust_left"
             self.adjust(LEFT)
-        # elif (xa1 > self.im_w-xa2):
-        elif xb1 < 96 or xb2 < 492:
+        elif (xa1 > self.im_w - xa2):
+            # elif xb1 < 96 or xb2 < 492:
             print "adjust_right"
             self.adjust(RIGHT)
         else:
@@ -195,7 +198,9 @@ class HurrySim(RoombaSim):
         if line_w():
             if xa1 < 0:
                 # 左に曲がる
+                pass
             elif xa2 < 0:
+                pass
                 # 右に曲がる
 
     def line_w(self):
@@ -252,7 +257,8 @@ class HurrySim(RoombaSim):
                 cv2.circle(image, (xb1, yb), 10, 100, -1)
             if xb2 != -1:
                 cv2.circle(image, (xb2, yb), 10, 100, -1)
-
+            self.im_h = image.shape[0]
+            self.im_w = image.shape[1]
             self.im = image
             self.show_im()
 
