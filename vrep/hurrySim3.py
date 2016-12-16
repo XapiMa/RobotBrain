@@ -33,7 +33,7 @@ class HurrySim(RoombaSim):
         cv2.waitKey(1)
 
     def recognize_line(self):
-        xa1, xa2, xb1, xb2 = self.line_pos(150, 200, 200, None)
+        xa1, xa2, xb1, xb2 = self.line_pos(200,250,200, None)
         print xa1, xa2, xb1, xb2
         return xa1, xa2, xb1, xb2
 
