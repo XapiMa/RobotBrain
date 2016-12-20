@@ -29,7 +29,7 @@ class HurrySim(RoombaSim):
         self.im_h = 0
         self.im_w = 0
         self.name = name
-        
+
         cv2.namedWindow(self.name)
 
         self.recognize_line()
@@ -43,7 +43,7 @@ class HurrySim(RoombaSim):
             time.sleep(0.01)
 
     def front(self, xb1, xb2):
-        # 手前の線で直進を判断
+        # 手前の縦線で直進を判断
         if (xb1 < self.im_w - xb2):
             print "adjust_left"
             self.adjust(LEFT)
@@ -61,18 +61,19 @@ class HurrySim(RoombaSim):
 
 
     def turn_corner(self, xa1, xa2):
+        # 横線の有無で回転の有無を判断
+        # 奥の縦線で回転方向を判断
         if self.line_w():
             if xa1 < 0:
                 # 左に曲がる
                 self.turn_corner(LEFT)
-
             elif xa2 < 0:
                 # 右に曲がる
                 self.turn_corner(RIGHT)
 
     def turn_corner(self,direction):
+        # 仮に、ルンバから横に100mmの位置を中心として85度回転するように設定した
         self.turn(direction, 85, 100)
-
 
     def turn(self, direction, angle, distance):
         # distanceは内側のタイヤと回転の中心との距離
@@ -105,8 +106,6 @@ class HurrySim(RoombaSim):
         xa1, xa2, xb1, xb2 = self.line_pos(200, 350, 200, None)
         print xa1, xa2, xb1, xb2, self.im_w
         return xa1, xa2, xb1, xb2
-
-        time.sleep(limit)
 
 
     def line_w(self):
@@ -183,7 +182,7 @@ class HurrySim(RoombaSim):
     def drive_direct(self, vel_right, vel_left):
         # 指定した速度で走る
         super(HurrySim, self).drive_direct(vel_right, vel_left)
-        # 現在の速度をnow_Rとnow_Lに更新する
+        # 現在の速度でnow_Rとnow_Lを更新する
         self.now_R = vel_right
         self.now_L = vel_left
         # 最大速度±500なので、それに調整するための分岐処理
