@@ -7,7 +7,11 @@ from sklearn import tree
 # import random
 # import time
 # import numpy as np
-from roombaSimAPI2 import *
+# from roombaSimAPI2 import *
+import socket
+from contextlib import closing
+import cv2
+from RoombaSCI import RoombaAPI
 # タイヤ間の距離23cm
 
 # 時間での管理を諦め、画像での管理に専念したい
@@ -17,10 +21,10 @@ LEFT = 1
 SPAN = 200
 
 
-class HurrySim(RoombaSim):
+class HurrySim(RoombaAPI):
 
-    def __init__(self, name, param):
-        super(HurrySim, self).__init__()
+    def __init__(self, name, param , port,baudrate):
+        super(HurrySim, self,port,baudrate).__init__()
         self.now_R = 0
         self.now_L = 0
         self.direction = 0
@@ -36,14 +40,19 @@ class HurrySim(RoombaSim):
 
         self.recognize_line()
         self.dataanalysis()
+        self.cap = cv2.VideoCapture(1)
+        self.cap.set(3,640)  # カメラの横のサイズ
+        self.cap.set(4,480)  # カメラの縦のサイズ
 
-    def go(self):
+    def go(self,sock):
         now_status = "pause"
         while True:
             xa1, xa2, xb1, xb2 = self.recognize_line()
             # self.turn_corner(xa1, xa2)
             time.sleep(0.01)
-            key = cv2.waitKey(1)
+            # key = cv2.waitKey(1)
+            key = sock.recv(bufsize)
+
             textkey = self.clf.predict([[xa1,xa2,xb1,xb2]])
             if textkey == "left":
                 key = 97
@@ -143,8 +152,9 @@ class HurrySim(RoombaSim):
 
 
     def line_pos(self, ya, yb, thd, im=None):
-        errorCode, resolution, image = vrep.simxGetVisionSensorImage(
-            self.clientID, self.cam_handle, 0, vrep.simx_opmode_streaming)
+        errorCode, resolution, image = self.cap.read()
+        # errorCode, resolution, image = vrep.simxGetVisionSensorImage(
+        #     self.clientID, self.cam_handle, 0, vrep.simx_opmode_streaming)
 
         if errorCode == 0:
             im = np.array(image, dtype=np.uint8)         # numpy に変換

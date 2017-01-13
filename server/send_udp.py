@@ -5,7 +5,7 @@ from contextlib import closing
 import getch
 
 def main():
-  host = '172.29.240.115'
+  host = '172.29.151.214'
   port = 5800
   count = 0
   sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
