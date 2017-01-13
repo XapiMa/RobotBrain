@@ -171,11 +171,8 @@ class HurrySim(RoombaSim):
             #     self.drive_direct(self.speed, self.speed)
             time.sleep(0.01)
 
-    def turn_right_course(self):
-        self.turn(RIGHT, 85, 100)
-
-    def turn_left_course(self):
-        self.turn(LEFT, 85, 100)
+    def turn_corner(self,direction):
+        self.turn(direction, 85, 100)
 
     def adjust(self, direction):
         self.drive_direct(self.speed - 30 - 30 * RIGHT * direction,
@@ -199,10 +196,11 @@ class HurrySim(RoombaSim):
         if self.line_w():
             if xa1 < 0:
                 # 左に曲がる
-                self.turn_left_course()
+
+                self.turn_corner(LEFT)
             elif xa2 < 0:
                 # 右に曲がる
-                self.turn_right_course()
+                self.turn_corner(RIGHT)
 
     def line_w(self):
         # 曲がると判断する位置に横線があればTrueを、なければFalseを返す
