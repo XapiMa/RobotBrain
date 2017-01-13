@@ -25,8 +25,8 @@ class HurrySim(RoombaSim):
         self.speed = 500
         self.im = None
         self.name = name
-        self.im_h=0
-        self.im_w=0
+        self.im_h = 0
+        self.im_w = 0
         cv2.namedWindow(self.name)
         self.recognize_line()
 
@@ -145,7 +145,7 @@ class HurrySim(RoombaSim):
         while True:
             xa1, xa2, xb1, xb2 = self.recognize_line()
             self.front(xb1, xb2)
-            self.turn_corner(xa1,xa2)
+            self.turn_corner(xa1, xa2)
             # if xb1 == -1:
             #     print "turn_left_course"
             #     time.sleep(2)
@@ -200,10 +200,7 @@ class HurrySim(RoombaSim):
             if xa1 < 0:
                 # 左に曲がる
                 self.turn_left_course()
-
-                pass
             elif xa2 < 0:
-                pass
                 # 右に曲がる
                 self.turn_right_course()
 
