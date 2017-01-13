@@ -4,14 +4,14 @@ from sklearn import tree
 # import vrep
 # import sys
 # import cv2
-# import random
-# import time
-# import numpy as np
+import random
+import time
+import numpy as np
 # from roombaSimAPI2 import *
 import socket
 from contextlib import closing
 import cv2
-from RoombaSCI import RoombaAPI
+from RoombaSCI_ogi import RoombaAPI
 # タイヤ間の距離23cm
 
 # 時間での管理を諦め、画像での管理に専念したい
@@ -24,7 +24,7 @@ SPAN = 200
 class HurrySim(RoombaAPI):
 
     def __init__(self, name, param , port,baudrate):
-        super(HurrySim, self,port,baudrate).__init__()
+        super(HurrySim, self).__init__(port,baudrate)
         self.now_R = 0
         self.now_L = 0
         self.direction = 0
@@ -34,23 +34,24 @@ class HurrySim(RoombaAPI):
         self.im_h = 0
         self.im_w = 0
         self.name = name
+        self.cap = cv2.VideoCapture(0)
+        self.cap.set(3,640)  # カメラの横のサイズ
+        self.cap.set(4,480)  # カメラの縦のサイズ
         self.clf = tree.DecisionTreeClassifier(max_depth=4)
         # self.f_obj = open("data.txt","w")
         cv2.namedWindow(self.name)
 
         self.recognize_line()
         self.dataanalysis()
-        self.cap = cv2.VideoCapture(1)
-        self.cap.set(3,640)  # カメラの横のサイズ
-        self.cap.set(4,480)  # カメラの縦のサイズ
 
     def go(self,sock):
         now_status = "pause"
+        bufsize = 4096
         while True:
             xa1, xa2, xb1, xb2 = self.recognize_line()
             # self.turn_corner(xa1, xa2)
             time.sleep(0.01)
-            # key = cv2.waitKey(1)
+            key = cv2.waitKey(0)
             key = sock.recv(bufsize)
 
             textkey = self.clf.predict([[xa1,xa2,xb1,xb2]])
@@ -152,13 +153,13 @@ class HurrySim(RoombaAPI):
 
 
     def line_pos(self, ya, yb, thd, im=None):
-        errorCode, resolution, image = self.cap.read()
+        errorCode, image = self.cap.read()
         # errorCode, resolution, image = vrep.simxGetVisionSensorImage(
         #     self.clientID, self.cam_handle, 0, vrep.simx_opmode_streaming)
 
-        if errorCode == 0:
+        if errorCode == True:
             im = np.array(image, dtype=np.uint8)         # numpy に変換
-            im.resize([resolution[0], resolution[1], 3])  # サイズを変換
+            # im.resize([resolution[0], resolution[1], 3])  # サイズを変換
             im = cv2.cvtColor(im, cv2.COLOR_RGB2BGR)     # 色を変換 RGB -> BGR
             im = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
             im = cv2.flip(im, 0)

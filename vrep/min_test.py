@@ -8,7 +8,7 @@ from contextlib import closing
 # コマンドライン引数でパラメータを指定して実行する
 # 学校のMac環境なら275が妥当。回転しすぎるなら大きく、回転不足なら小さくする
 
-port = "/dev/cu.usbserial-A2001n4D" #ここは各自で違う！
+port = "/dev/cu.usbserial-A2001mJ7" #ここは各自で違う！
 baudrate = 115200
 
 param =275
