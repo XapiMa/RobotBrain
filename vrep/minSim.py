@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-
+import pandas as pd
+from sklearn import tree
 # import vrep
 # import sys
 # import cv2
@@ -29,31 +30,57 @@ class HurrySim(RoombaSim):
         self.im_h = 0
         self.im_w = 0
         self.name = name
-
+        self.clf = tree.DecisionTreeClassifier(max_depth=4)
+        # self.f_obj = open("data.txt","w")
         cv2.namedWindow(self.name)
 
         self.recognize_line()
-
+        self.dataanalysis()
 
     def go(self):
+        now_status = "pause"
         while True:
             xa1, xa2, xb1, xb2 = self.recognize_line()
-            self.front(xb1, xb2)
-            self.turn_corner(xa1, xa2)
+            # self.turn_corner(xa1, xa2)
             time.sleep(0.01)
+            key = cv2.waitKey(1)
+            textkey = self.clf.predict([[xa1,xa2,xb1,xb2]])
+            if textkey == "left":
+                key = 97
+            elif textkey == "right":
+                key =100
+            elif textkey == "straight":
+                key = 119
+            if key==97:
+                print "goleft"
+                now_status = "left"
+                self.turn(LEFT, 10, 100)
+            elif key==100:
+                self.turn(RIGHT, 10, 100)
+                now_status = "right"
+            elif key==119:
+                print "gostraight"
+                now_status = "straight"                
+                self.front(xb1, xb2)
+            
+            elif key==115:
+                now_status = "pause" 
+            print self.clf.predict([[xa1,xa2,xb1,xb2]])
+
+            # print >> self.f_obj , now_status,xa1,xa2,xb1,xb2
 
     def front(self, xb1, xb2):
         # 手前の縦線で直進を判断
-        if (xb1 < self.im_w - xb2):
-            print "adjust_left"
-            self.adjust(LEFT)
-        elif (xb1 > self.im_w - xb2):
-            print "adjust_right"
-            self.adjust(RIGHT)
-        else:
-            print "go_straight"
-            self.drive_direct(self.speed, self.speed)
-
+        # if (xb1 < self.im_w - xb2):
+        #     print "adjust_left"
+        #     self.adjust(LEFT)
+        # elif (xb1 > self.im_w - xb2):
+        #     print "adjust_right"
+        #     self.adjust(RIGHT)
+        # else:
+        #     print "go_straight"
+        #     self.drive_direct(self.speed, self.speed)
+        self.drive_direct(self.speed, self.speed)
 
     def adjust(self, direction):
         self.drive_direct(self.speed - 30 - 30 * RIGHT * direction,
@@ -66,12 +93,14 @@ class HurrySim(RoombaSim):
         if self.line_w():
             if xa1 < 0:
                 # 左に曲がる
-                self.turn_corner(LEFT)
+                print "turn_corner left"
+                self.turn_cornerb(LEFT)
             elif xa2 < 0:
                 # 右に曲がる
-                self.turn_corner(RIGHT)
+                print "turn_corner right"
+                self.turn_cornerb(RIGHT)
 
-    def turn_corner(self,direction):
+    def turn_cornerb(self,direction):
         # 仮に、ルンバから横に100mmの位置を中心として85度回転するように設定した
         self.turn(direction, 85, 100)
 
@@ -95,9 +124,9 @@ class HurrySim(RoombaSim):
             rSP = 0
         self.drive_direct(self.speed * rSP, self.speed * lSP)
         # 回転しながら画面描画をするため、回転時間を10に分割して画面描画(recognize_line)を行っている
-        for i in range(10):
-            self.recognize_line()
-            time.sleep(limit / 11.0)
+        # for i in range(10):
+        #     self.recognize_line()
+        #     time.sleep(limit / 11.0)
 
 
 
@@ -176,7 +205,7 @@ class HurrySim(RoombaSim):
 
     def show_im(self):
         cv2.imshow(self.name, self.im)
-        cv2.waitKey(1)# 1/1000秒入力を待ち受ける。これがないと画面が描画されない
+        # cv2.waitKey(1)# 1/1000秒入力を待ち受ける。これがないと画面が描画されない
 
 
     def drive_direct(self, vel_right, vel_left):
@@ -194,3 +223,11 @@ class HurrySim(RoombaSim):
             self.now_L = 500
         elif(vel_left < -500):
             self.now_L = -500
+    def dataanalysis(self):
+        dataset = pd.read_csv("data.txt")
+        # dataset = dataset.drop_duplicates()
+        data = dataset[["xa1","xa2","xb1","xb2"]]
+        target = dataset["status"]
+        target.value_counts()
+        self.clf = tree.DecisionTreeClassifier(max_depth=4)
+        self.clf = self.clf.fit(data,target)

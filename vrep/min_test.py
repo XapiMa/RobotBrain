@@ -5,7 +5,9 @@ import time
 import cv2
 # コマンドライン引数でパラメータを指定して実行する
 # 学校のMac環境なら275が妥当。回転しすぎるなら大きく、回転不足なら小さくする
-param =float(sys.argv[1])
+param =275
+if len(sys.argv)>=1:
+	param =float(sys.argv[1])
 rmb = minSim.HurrySim("rmb",param)
 
 
