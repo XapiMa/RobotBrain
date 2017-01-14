@@ -18,12 +18,12 @@ LEFT = 1
 SPAN = 200
 
 
-class HurrySim(RoombaAPI):
+class HurryAPI(RoombaAPI):
 
-    def __init__(self, name, param , port,baudrate):
-        super(HurrySim, self).__init__(port,baudrate)
-        self.now_R = 0
-        self.now_L = 0
+    def __init__(self, name, param, r_port, r_baudrate, sock):
+        super(HurryAPI, self).__init__(r_port, r_baudrate)
+        # self.now_R = 0
+        # self.now_L = 0
         self.direction = 0
         self.param = param / 1000.0  # 速度mm/sを現実時刻から仮想環境内の時刻に調整するパラメータ．学内Macなら275/1000が妥当．
         self.speed = 500
@@ -32,16 +32,17 @@ class HurrySim(RoombaAPI):
         self.im_w = 0
         self.name = name
         self.cap = cv2.VideoCapture(0)
-        self.cap.set(3,640)  # カメラの横のサイズ
-        self.cap.set(4,480)  # カメラの縦のサイズ
+        self.cap.set(3, 640)  # カメラの横のサイズ
+        self.cap.set(4, 480)  # カメラの縦のサイズ
         self.clf = tree.DecisionTreeClassifier(max_depth=4)
         # self.f_obj = open("data.txt","w")
         cv2.namedWindow(self.name)
-
         self.recognize_line()
         self.dataanalysis()
+        self.sock = sock
+        self.go()
 
-    def go(self,sock):
+    def go(self):
         now_status = "pause"
         bufsize = 4096
         while True:
@@ -52,32 +53,33 @@ class HurrySim(RoombaAPI):
             key = cv2.waitKey(1)
 
             try:
-                    key = sock.recv(bufsize)
+                key = self.sock.recv(bufsize)
             except socket.error:
                 pass
 
-            textkey = self.clf.predict([[xa1,xa2,xb1,xb2]])
+            textkey = self.clf.predict([[xa1, xa2, xb1, xb2]])
             if textkey == "left":
                 key = 97
             elif textkey == "right":
-                key =100
+                key = 100
             elif textkey == "straight":
                 key = 119
-            if key==97:
+            if key == 97:
                 print "goleft"
                 now_status = "left"
                 self.turn(LEFT, 10, 100)
-            elif key==100:
+            elif key == 100:
                 self.turn(RIGHT, 10, 100)
                 now_status = "right"
-            elif key==119:
+            elif key == 119:
                 print "gostraight"
                 now_status = "straight"
-                self.front(xb1, xb2)
+                self.drive_direct(self.speed,self.speed)
+                # self.front(xb1, xb2)
 
-            elif key==115:
+            elif key == 115:
                 now_status = "pause"
-            print self.clf.predict([[xa1,xa2,xb1,xb2]])
+            print self.clf.predict([[xa1, xa2, xb1, xb2]])
 
             # print >> self.f_obj , now_status,xa1,xa2,xb1,xb2
 
@@ -98,7 +100,6 @@ class HurrySim(RoombaAPI):
         self.drive_direct(self.speed - 30 - 30 * RIGHT * direction,
                           self.speed - 30 - 30 * LEFT * direction)
 
-
     def turn_corner(self, xa1, xa2):
         # 横線の有無で回転の有無を判断
         # 奥の縦線で回転方向を判断
@@ -112,7 +113,7 @@ class HurrySim(RoombaAPI):
                 print "turn_corner right"
                 self.turn_cornerb(RIGHT)
 
-    def turn_cornerb(self,direction):
+    def turn_cornerb(self, direction):
         # 仮に、ルンバから横に100mmの位置を中心として85度回転するように設定した
         self.turn(direction, 85, 100)
 
@@ -140,19 +141,15 @@ class HurrySim(RoombaAPI):
         #     self.recognize_line()
         #     time.sleep(limit / 11.0)
 
-
-
     def recognize_line(self):
         # 各座標の取得・表示・画面描画を行う
         xa1, xa2, xb1, xb2 = self.line_pos(200, 350, 200, None)
         print xa1, xa2, xb1, xb2, self.im_w
         return xa1, xa2, xb1, xb2
 
-
     def line_w(self):
         # 曲がると判断する位置に横線があればTrueを、なければFalseを返す
         return True
-
 
     def line_pos(self, ya, yb, thd, im=None):
         errorCode, image = self.cap.read()
@@ -215,32 +212,31 @@ class HurrySim(RoombaAPI):
         else:
             return -2, -2, -2, -2
 
-
     def show_im(self):
         cv2.imshow(self.name, self.im)
         # cv2.waitKey(1)# 1/1000秒入力を待ち受ける。これがないと画面が描画されない
 
+    # def drive_direct(self, vel_right, vel_left):
+    #     # 指定した速度で走る
+    #     super(HurryAPI, self).drive_direct(vel_right, vel_left)
+    #     # 現在の速度でnow_Rとnow_Lを更新する
+    #     self.now_R = vel_right
+    #     self.now_L = vel_left
+    #     # 最大速度±500なので、それに調整するための分岐処理
+    #     if(vel_right > 500):
+    #         self.now_R = 500
+    #     elif(vel_right < -500):
+    #         self.now_R = -500
+    #     if(vel_left > 500):
+    #         self.now_L = 500
+    #     elif(vel_left < -500):
+    #         self.now_L = -500
 
-    def drive_direct(self, vel_right, vel_left):
-        # 指定した速度で走る
-        super(HurrySim, self).drive_direct(vel_right, vel_left)
-        # 現在の速度でnow_Rとnow_Lを更新する
-        self.now_R = vel_right
-        self.now_L = vel_left
-        # 最大速度±500なので、それに調整するための分岐処理
-        if(vel_right > 500):
-            self.now_R = 500
-        elif(vel_right < -500):
-            self.now_R = -500
-        if(vel_left > 500):
-            self.now_L = 500
-        elif(vel_left < -500):
-            self.now_L = -500
     def dataanalysis(self):
         dataset = pd.read_csv("data.txt")
         # dataset = dataset.drop_duplicates()
-        data = dataset[["xa1","xa2","xb1","xb2"]]
+        data = dataset[["xa1", "xa2", "xb1", "xb2"]]
         target = dataset["status"]
         target.value_counts()
         self.clf = tree.DecisionTreeClassifier(max_depth=4)
-        self.clf = self.clf.fit(data,target)
+        self.clf = self.clf.fit(data, target)

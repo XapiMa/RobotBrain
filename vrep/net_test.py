@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
 import time
-import cv2
 import socket
 from contextlib import closing
 # コマンドライン引数でパラメータを指定して実行する
@@ -26,5 +25,3 @@ with closing(sock):
 		print count
 		count +=1
 		time.sleep(1)
-# 終了時の処理
-cv2.destroyAllWindows()

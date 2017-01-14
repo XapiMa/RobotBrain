@@ -9,7 +9,6 @@ def main():
     # host = '172.29.151.214'
     host = '127.0.0.1'
     port = 5800
-    count = 0
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     with closing(sock):
         while True:
@@ -18,7 +17,6 @@ def main():
             if message == 'e':
                 break
             sock.sendto(message, (host, port))
-            count += 1
         time.sleep(1)
     return
 

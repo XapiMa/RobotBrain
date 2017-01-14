@@ -1,28 +1,46 @@
 # -*- coding: utf-8 -*-
+import sys
+import time
+import socket
+from contextlib import closing
 import cv2
 import numpy as np
-import time
-import sys
+# コマンドライン引数でパラメータを指定して実行する
 
 
 class HurrySim(object):
 
-    def __init__(self, name):
-	    self.im = None
-	    self.im_h = 0
-	    self.im_w = 0
-	    self.name = name
-	    self.cap = cv2.VideoCapture(0)
-	    self.cap.set(3, 640)  # カメラの横のサイズ
-	    self.cap.set(4, 480)  # カメラの縦のサイズ
-	    cv2.namedWindow(self.name)
-	    self.recognize_line()
-	    self.go()
+    def __init__(self, name, sock):
+        self.im = None
+        self.im_h = 0
+        self.im_w = 0
+        self.name = name
+        self.cap = cv2.VideoCapture(0)
+        self.cap.set(3, 640)  # カメラの横のサイズ
+        self.cap.set(4, 480)  # カメラの縦のサイズ
+        cv2.namedWindow(self.name)
+        self.recognize_line()
+        self.sock = sock
+        self.go()
 
     def go(self):
+		bufsize = 4096
+		count = 1
 		while True:
+			try:
+				key = self.sock.recv(bufsize)
+				print key
+				if key == "q":
+					sys.exit()
+			except socket.error:
+				# print "no Massage"
+				pass
 			self.recognize_line()
-			time.sleep(0.1)
+			print count
+			count += 1
+			time.sleep(1)
+
+
 
     def recognize_line(self):
 	    # 各座標の取得・表示・画面描画を行う
@@ -97,5 +115,13 @@ class HurrySim(object):
         if ex == 27:
 			sys.exit()
 
-rmb = HurrySim("rmb")
-cv2.destroyAllWindows()
+# host = '172.29.151.214'
+host = '127.0.0.1'
+port = 5800
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+with closing(sock):
+    sock.bind((host, port))
+    sock.setblocking(0)
+    rmb = HurrySim("rmb", sock)
