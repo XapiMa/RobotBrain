@@ -33,7 +33,6 @@ class HurrySim(RoombaSim):
         self.clf = tree.DecisionTreeClassifier(max_depth=4)
         # self.f_obj = open("data.txt","w")
         cv2.namedWindow(self.name)
-
         self.recognize_line()
         self.dataanalysis()
 

@@ -48,8 +48,13 @@ class HurrySim(RoombaAPI):
             xa1, xa2, xb1, xb2 = self.recognize_line()
             # self.turn_corner(xa1, xa2)
             time.sleep(0.01)
-            key = cv2.waitKey(0)
-            key = sock.recv(bufsize)
+            # 画面描画
+            key = cv2.waitKey(1)
+
+            try:
+                    key = sock.recv(bufsize)
+            except socket.error:
+                pass
 
             textkey = self.clf.predict([[xa1,xa2,xb1,xb2]])
             if textkey == "left":

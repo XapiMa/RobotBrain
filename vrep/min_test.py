@@ -21,6 +21,8 @@ port = 5800
 bufsize = 4096
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.setblocking(0)
+
 with closing(sock):
 	sock.bind((host, port))
 	rmb.go(sock)

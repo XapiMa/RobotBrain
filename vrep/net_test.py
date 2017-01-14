@@ -14,10 +14,15 @@ bufsize = 4096
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 with closing(sock):
 	sock.bind((host, port))
+	sock.setblocking(0)
 	count = 1
 	while True:
-		key = sock.recv(bufsize)
-		print key
+		try:
+			key = sock.recv(bufsize)
+			print key
+		except socket.error:
+			# print "no Massage"
+			pass
 		print count
 		count +=1
 		time.sleep(1)
