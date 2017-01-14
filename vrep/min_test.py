@@ -23,9 +23,8 @@ bufsize = 4096
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 with closing(sock):
 	sock.bind((host, port))
-	while True:
-		rmb.go(sock)
-		time.sleep(0.01)
+	rmb.go(sock)
+	# time.sleep(0.01)
 # 終了時の処理
 cv2.destroyAllWindows()
 x.off()

@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
 from sklearn import tree
-# import vrep
 # import sys
-# import cv2
 import random
 import time
 import numpy as np
-# from roombaSimAPI2 import *
 import socket
 from contextlib import closing
 import cv2
