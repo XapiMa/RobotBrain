@@ -161,7 +161,6 @@ class HurryAPI(RoombaAPI):
             # im.resize([resolution[0], resolution[1], 3])  # サイズを変換
             im = cv2.cvtColor(im, cv2.COLOR_RGB2BGR)     # 色を変換 RGB -> BGR
             im = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
-            im = cv2.flip(im, 0)
             image = im.copy()
             yoko_a = image[ya, :]
             yoko_b = image[yb, :]
@@ -176,7 +175,8 @@ class HurryAPI(RoombaAPI):
                 xa1 = np.argmax(yoko_a[0:xmid])
 
             if np.max(yoko_a[xmid:xmax]) < thd:
-                xa2 = -1
+                xa2 = 641
+                # xa2 = -1
             else:
                 xa2 = np.argmax(yoko_a[xmid:xmax]) + xmid
 
@@ -186,7 +186,8 @@ class HurryAPI(RoombaAPI):
                 xb1 = np.argmax(yoko_b[0:xmid])
 
             if np.max(yoko_b[xmid:xmax]) < thd:
-                xb2 = -1
+                xb2 = 641
+                # xb2 = -1
             else:
                 xb2 = np.argmax(yoko_b[xmid:xmax]) + xmid
 
@@ -196,11 +197,11 @@ class HurryAPI(RoombaAPI):
 
             if xa1 != -1:
                 cv2.circle(image, (xa1, ya), 10, 100, -1)
-            if xa2 != -1:
+            if xa2 != 641:
                 cv2.circle(image, (xa2, ya), 10, 100, -1)
             if xb1 != -1:
                 cv2.circle(image, (xb1, yb), 10, 100, -1)
-            if xb2 != -1:
+            if xb2 != 641:
                 cv2.circle(image, (xb2, yb), 10, 100, -1)
             self.im_h = image.shape[0]
             self.im_w = image.shape[1]
