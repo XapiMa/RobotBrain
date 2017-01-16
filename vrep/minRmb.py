@@ -59,25 +59,25 @@ class HurryAPI(RoombaAPI):
 
             textkey = self.clf.predict([[xa1, xa2, xb1, xb2]])
             if textkey == "left":
-                key = 97
+                key = 'a'
             elif textkey == "right":
-                key = 100
+                key = 'd'
             elif textkey == "straight":
-                key = 119
-            if key == 97:
+                key = 'w'
+            if key == 'a':
                 print "goleft"
                 now_status = "left"
                 self.turn(LEFT, 10, 100)
-            elif key == 100:
+            elif key == 'd':
                 self.turn(RIGHT, 10, 100)
                 now_status = "right"
-            elif key == 119:
+            elif key == 'w':
                 print "gostraight"
                 now_status = "straight"
                 self.drive_direct(self.speed,self.speed)
                 # self.front(xb1, xb2)
 
-            elif key == 115:
+            elif key == 's':
                 now_status = "pause"
             print self.clf.predict([[xa1, xa2, xb1, xb2]])
 

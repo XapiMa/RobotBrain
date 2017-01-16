@@ -19,6 +19,16 @@ with closing(sock):
 		try:
 			key = sock.recv(bufsize)
 			print key
+			if key=='q':
+				sys.exit()
+			if key == 'a':
+				print 'go_left'
+			elif key == 'd':
+				print 'go_right'
+			elif key == 'w':
+				print 'go_straight'
+			elif key == 's':
+				print 'pause'
 		except socket.error:
 			# print "no Massage"
 			pass
