@@ -8,6 +8,9 @@ class SuperC(object):
     def show_d(self,count):
         print self.team_n,self.name,"c("+str(count)+")"
 
+    def ppap(self):
+        print "PPAP"
+
 class UltraC(SuperC):
     def __init__(self,name,gender):
         super(UltraC,self).__init__(name)
@@ -25,3 +28,4 @@ UC=UltraC('Matano','Men')
 for i in range(5):
     SC.show_d(i)
     UC.show_d(i)
+    UC.ppap()

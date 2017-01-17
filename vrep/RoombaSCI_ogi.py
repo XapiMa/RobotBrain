@@ -59,7 +59,7 @@ class Bumps(object):
         x = self.data & 2
         return bool(x > 0)
     left = property(__left)
-        
+
 class Buttons(object):
     def __init__(self,data):
         self.data = data
@@ -195,15 +195,15 @@ class SensorData(object):
     def __wall(self):
         return bool(self.__data[1] == 1)
     wall = property(__wall)
-    
+
     def __cliff(self):
         return Cliff(self.__data[2:6])
     cliff = property(__cliff)
-    
+
     def __virtual_wall(self):
         return bool(self.__data[6] == 1)
     virtual_wall = property(__virtual_wall)
-    
+
     def __motor_overcurrents(self):
         return MotorOvercurrents(self.__data[7])
     motor_overcurrents = property(__motor_overcurrents)
@@ -215,7 +215,7 @@ class SensorData(object):
     def __remote_control_cmds(self):
         return self.__data[10]
     remote_control_cmds = property(__remote_control_cmds)
-    
+
     def __buttons(self):
         return Buttons(self.__data[11])
     buttons = property(__buttons)
@@ -227,7 +227,7 @@ class SensorData(object):
     def __angle(self):
         return TwoBytes(self.__data[14:16]).to_int16()
     angle = property(__angle)
-    
+
     def __charging_state(self):
         return self.__data[16]
     charging_state = property(__charging_state)
@@ -235,11 +235,11 @@ class SensorData(object):
     def __voltage(self):
         return TwoBytes(self.__data[17:19]).to_uint16()
     voltage = property(__voltage)
-    
+
     def __current(self):
         return TwoBytes(self.__data[19:21]).to_int16()
     current = property(__current)
-    
+
     def __temperature(self):
         return self.__data[21];
     temperature = property(__temperature)
@@ -247,7 +247,7 @@ class SensorData(object):
     def __charge(self):
         return TwoBytes(self.__data[22:24]).to_uint16()
     charge = property(__charge)
-    
+
     def __capacity(self):
         return TwoBytes(self.__data[24:26]).to_uint16()
     capacity = property(__capacity)
@@ -281,7 +281,7 @@ class LightBumpData(object):
         return TwoBytes(self.__data[10:12]).to_uint16()
     right = property(__right)
 
-    
+
 
 class int16(object):
     def __init__(self, i):
@@ -294,7 +294,7 @@ class int16(object):
     def __get_value(self):
         return self.__val
     value = property(__get_value)
-            
+
 class RoombaAPI(object):
 
     def __init__(self,port,baudrate):
@@ -306,7 +306,7 @@ class RoombaAPI(object):
         self.port.timeout = 10
         if (self.port.isOpen() == False):
             self.port.open()
-
+            
     def connect(self):
         # XXX(Jflesch): Don't set rootooth baudrate here. Roomba don't have all the same
         # default baudrate. For instance, the original author had a baudrate of
@@ -360,7 +360,7 @@ class RoombaAPI(object):
               count = count + 1
         self.port.write(bytes.toCharString())
         self.port.flush()
-              
+
     def sendcmd(self, cmd):
         self.send_to_roomba([ cmd ])
 
@@ -378,16 +378,16 @@ class RoombaAPI(object):
 
     def off(self):
         self.sendcmd(133)
-        
+
     def spot(self):
         self.sendcmd(134)
-        
+
     def clean(self):
         self.sendcmd(135)
-        
+
     def max(self):
         self.sendcmd(136)
-        
+
     def __get_speed(self):
         if self.__speed < 0:
             return 0
@@ -404,7 +404,7 @@ class RoombaAPI(object):
             self.__speed = speedInt
 
     speed = property(__get_speed,__set_speed)
-    
+
     def drive(self, velocity, radius):
         vel = ConvertToBytes(int16(velocity).value)
         rad = ConvertToBytes(int16(radius).value)
@@ -432,25 +432,25 @@ class RoombaAPI(object):
 
     def backward(self):
         self.drive(self.speed *-1,-32768)
-        
+
     def left(self):
         self.drive(self.speed,2)
-        
+
     def right(self):
         self.drive(self.speed,-2)
-        
+
     def spin_left(self):
         self.drive(self.speed,1)
-        
+
     def spin_right(self):
         self.drive(self.speed,-1)
 
     def stop(self):
         self.drive(0,0)
-        
+
     def motors(self, data):
         self.send_to_roomba([ 138, data ])
-        
+
     def led(self, led,color,intensity):
         self.send_to_roomba([
             139,
@@ -458,19 +458,19 @@ class RoombaAPI(object):
             color,
             intensity
         ])
-        
+
     def song(self):
         return
-    
+
     def play(self, songNum):
         self.send_to_roomba([
             141,
             songNum
         ])
-        
+
     def dock(self):
         self.sendcmd(143)
-        
+
     def __sensors(self):
         self.port.flushInput()
         self.send_to_roomba([
@@ -537,7 +537,7 @@ if __name__ == "__main__":
     x = RoombaAPI(port, baudrate)
 
     try:
- 
+
         print "Connect"
         x.connect()
         print "Control"
@@ -568,4 +568,3 @@ if __name__ == "__main__":
         print "Off"
         x.off()
         x.close()
-

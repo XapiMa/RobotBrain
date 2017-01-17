@@ -22,6 +22,9 @@ class HurryAPI(RoombaAPI):
 
     def __init__(self, name, param, r_port, r_baudrate, sock):
         super(HurryAPI, self).__init__("/dev/cu.usbserial-A2001mJ7", 115200)
+        self.start()
+        self.full()
+
         print self.port
         self.now_R = 0
         self.now_L = 0
@@ -42,9 +45,9 @@ class HurryAPI(RoombaAPI):
         # self.dataanalysis()
         self.sock = sock
         time.sleep(2)
-        super(HurryAPI,self).backward()
+        self.backward()
         time.sleep(1)
-        super(HurryAPI,self).stop()
+        self.stop()
         # self.wimg = cv2.imread("../face.png",0)
         self.go()
 
