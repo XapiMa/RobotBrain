@@ -22,8 +22,8 @@ class HurryAPI(RoombaAPI):
 
     def __init__(self, name, param, r_port, r_baudrate, sock):
         super(HurryAPI, self).__init__(r_port, r_baudrate)
-        # self.now_R = 0
-        # self.now_L = 0
+        self.now_R = 0
+        self.now_L = 0
         self.direction = 0
         self.param = param / 1000.0  # 速度mm/sを現実時刻から仮想環境内の時刻に調整するパラメータ．学内Macなら275/1000が妥当．
         self.speed = 500
@@ -74,7 +74,7 @@ class HurryAPI(RoombaAPI):
             elif key == 'w':
                 print "gostraight"
                 now_status = "straight"
-                self.drive_direct(self.speed,self.speed)
+                self.drive_direct(self.speed, self.speed)
                 # self.front(xb1, xb2)
 
             elif key == 's':
@@ -82,6 +82,26 @@ class HurryAPI(RoombaAPI):
             print self.clf.predict([[xa1, xa2, xb1, xb2]])
 
             # print >> self.f_obj , now_status,xa1,xa2,xb1,xb2
+
+    def speed_up(self):
+        add_speed = SPAN
+        max_speed = self.now_R
+        if max_speed < self.now_L:
+            max_speed = self.now_L
+        if max_speed + add_speed > 500:
+            add_speed = 500 - max_speed
+        self.drive_direct(self.now_R + add_speed, self.now_L + add_speed)
+        time.sleep(0.3)
+
+    def speed_down(self):
+        reduce_speed = SPAN
+        min_speed = self.now_R
+        if min_speed > self.now_L:
+            min_speed = self.now_L
+        if min_speed + reduce_speed < 0:
+            reduce_speed = min_speed
+        self.drive_direct(self.now_R - reduce_speed, self.now_L - reduce_speed)
+        time.sleep(0.3)
 
     def front(self, xb1, xb2):
         # 手前の縦線で直進を判断
@@ -217,21 +237,21 @@ class HurryAPI(RoombaAPI):
         cv2.imshow(self.name, self.im)
         # cv2.waitKey(1)# 1/1000秒入力を待ち受ける。これがないと画面が描画されない
 
-    # def drive_direct(self, vel_right, vel_left):
-    #     # 指定した速度で走る
-    #     super(HurryAPI, self).drive_direct(vel_right, vel_left)
-    #     # 現在の速度でnow_Rとnow_Lを更新する
-    #     self.now_R = vel_right
-    #     self.now_L = vel_left
-    #     # 最大速度±500なので、それに調整するための分岐処理
-    #     if(vel_right > 500):
-    #         self.now_R = 500
-    #     elif(vel_right < -500):
-    #         self.now_R = -500
-    #     if(vel_left > 500):
-    #         self.now_L = 500
-    #     elif(vel_left < -500):
-    #         self.now_L = -500
+    def drive_direct(self, vel_right, vel_left):
+        # 指定した速度で走る
+        super(HurryAPI, self).drive_direct(vel_right, vel_left)
+        # 現在の速度でnow_Rとnow_Lを更新する
+        self.now_R = vel_right
+        self.now_L = vel_left
+        # 最大速度±500なので、それに調整するための分岐処理
+        if(vel_right > 500):
+            self.now_R = 500
+        elif(vel_right < -500):
+            self.now_R = -500
+        if(vel_left > 500):
+            self.now_L = 500
+        elif(vel_left < -500):
+            self.now_L = -500
 
     def dataanalysis(self):
         dataset = pd.read_csv("data.txt")
