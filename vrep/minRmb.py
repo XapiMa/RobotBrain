@@ -45,7 +45,7 @@ class HurryAPI(RoombaAPI):
         super(HurryAPI,self).backward()
         time.sleep(1)
         super(HurryAPI,self).stop()
-        self.wimg = cv2.imread("../face.png",0)
+        # self.wimg = cv2.imread("../face.png",0)
         self.go()
 
     def go(self):
@@ -56,13 +56,13 @@ class HurryAPI(RoombaAPI):
             # self.turn_corner(xa1, xa2)
             time.sleep(0.01)
             # 画面描画
-            key = cv2.waitKey(30)
-            cv2.imshow('image',self.wimg)
+            key = cv2.waitKey(1)
+            # cv2.imshow('image',self.wimg)
 
-            # try:
-            #     key = self.sock.recv(bufsize)
-            # except socket.error:
-            #     pass
+            try:
+                key = self.sock.recv(bufsize)
+            except socket.error:
+                pass
 
             # textkey = self.clf.predict([[xa1, xa2, xb1, xb2]])
             # if textkey == "left":
