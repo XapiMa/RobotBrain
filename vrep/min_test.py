@@ -10,7 +10,7 @@ import minRmb
 r_port = "/dev/cu.usbserial-A2001mJ7" #ここは各自で違う！
 r_baudrate = 115200
 
-param =275
+param =1000
 if len(sys.argv)>=2:
 	param =float(sys.argv[1])
 

@@ -8,7 +8,7 @@ from contextlib import closing
 
 def main():
     # ルンバの接続の初期化
-    port = "/dev/cu.usbserial-A2001n4D" #ここは各自で違う！
+    port = "/dev/cu.usbserial-A2001mJ7" #ここは各自で違う！
     baudrate = 115200
 
     x = RoombaAPI(port, baudrate)
@@ -32,7 +32,7 @@ def main():
         if key == 27:    # ESC キー: 終了
             break
         if key == 63232: # 上矢印キー: 前進
-            x.forward()
+            x.drive_direct(500,500)
         if key == 63233: # 下矢印キー: 後退
             x.backward()
         if key == 63235: # 右矢印キー: 右回転
@@ -43,10 +43,10 @@ def main():
             x.stop()
 
         #print x.sensors.bumps.left
-
-        if x.sensors.bumps.left==True:
-            print u"バンパーに何かあたったよ"
-            x.stop()
+        #
+        # if x.sensors.bumps.left==True:
+        #     print u"バンパーに何かあたったよ"
+        #     x.stop()
 
         ###################
         #### 画像の表示 ####

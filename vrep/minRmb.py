@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
 from sklearn import tree
-# import sys
+import sys
 import random
 import time
 import numpy as np
@@ -21,7 +21,8 @@ SPAN = 200
 class HurryAPI(RoombaAPI):
 
     def __init__(self, name, param, r_port, r_baudrate, sock):
-        super(HurryAPI, self).__init__(r_port, r_baudrate)
+        super(HurryAPI, self).__init__("/dev/cu.usbserial-A2001mJ7", 115200)
+        print self.port
         self.now_R = 0
         self.now_L = 0
         self.direction = 0
@@ -35,11 +36,16 @@ class HurryAPI(RoombaAPI):
         self.cap.set(3, 640)  # カメラの横のサイズ
         self.cap.set(4, 480)  # カメラの縦のサイズ
         self.clf = tree.DecisionTreeClassifier(max_depth=4)
-        # self.f_obj = open("data.txt","w")
+        self.f_obj = open("data.txt","w")
         cv2.namedWindow(self.name)
         self.recognize_line()
-        self.dataanalysis()
+        # self.dataanalysis()
         self.sock = sock
+        time.sleep(2)
+        super(HurryAPI,self).backward()
+        time.sleep(1)
+        super(HurryAPI,self).stop()
+        self.wimg = cv2.imread("../face.png",0)
         self.go()
 
     def go(self):
@@ -50,20 +56,21 @@ class HurryAPI(RoombaAPI):
             # self.turn_corner(xa1, xa2)
             time.sleep(0.01)
             # 画面描画
-            key = cv2.waitKey(1)
+            key = cv2.waitKey(30)
+            cv2.imshow('image',self.wimg)
 
-            try:
-                key = self.sock.recv(bufsize)
-            except socket.error:
-                pass
+            # try:
+            #     key = self.sock.recv(bufsize)
+            # except socket.error:
+            #     pass
 
-            textkey = self.clf.predict([[xa1, xa2, xb1, xb2]])
-            if textkey == "left":
-                key = 'a'
-            elif textkey == "right":
-                key = 'd'
-            elif textkey == "straight":
-                key = 'w'
+            # textkey = self.clf.predict([[xa1, xa2, xb1, xb2]])
+            # if textkey == "left":
+            #     key = 'a'
+            # elif textkey == "right":
+            #     key = 'd'
+            # elif textkey == "straight":
+            #     key = 'w'
             if key == 'a':
                 print "goleft"
                 now_status = "left"
@@ -84,12 +91,17 @@ class HurryAPI(RoombaAPI):
                 now_status = "speeddown"
                 self.speed_down()
                 # self.front(xb1, xb2)
-
             elif key == 's':
+                print 'pause'
                 now_status = "pause"
-            print self.clf.predict([[xa1, xa2, xb1, xb2]])
+            elif key == 'c':
+                self.drive_direct(0,0)
+            elif key == 'q':
+                print 'bye'
+                sys.exit()
+            # print self.clf.predict([[xa1, xa2, xb1, xb2]])
 
-            # print >> self.f_obj , now_status,xa1,xa2,xb1,xb2
+            print >> self.f_obj , now_status,xa1,xa2,xb1,xb2
 
     def speed_up(self):
         add_speed = SPAN
@@ -247,7 +259,8 @@ class HurryAPI(RoombaAPI):
 
     def drive_direct(self, vel_right, vel_left):
         # 指定した速度で走る
-        super(HurryAPI, self).drive_direct(vel_right, vel_left)
+        print type(vel_right),vel_right,type(vel_left),vel_left
+        super(HurryAPI, self).drive_direct(int(vel_right), int(vel_left))
         # 現在の速度でnow_Rとnow_Lを更新する
         self.now_R = vel_right
         self.now_L = vel_left
