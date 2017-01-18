@@ -41,7 +41,7 @@ class HurryAPI(RoombaAPI):
         self.clf = tree.DecisionTreeClassifier(max_depth=4)
         self.f_obj = open("data.txt","w")
         cv2.namedWindow(self.name)
-        self.recognize_line()
+        # self.recognize_line()
         # self.dataanalysis()
         self.sock = sock
         # self.wimg = cv2.imread("../face.png",0)
