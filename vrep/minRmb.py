@@ -35,7 +35,7 @@ class HurryAPI(RoombaAPI):
         self.im_h = 0
         self.im_w = 0
         self.name = name
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(1)
         self.cap.set(3, 640)  # カメラの横のサイズ
         self.cap.set(4, 480)  # カメラの縦のサイズ
         self.clf = tree.DecisionTreeClassifier(max_depth=4)
@@ -44,10 +44,6 @@ class HurryAPI(RoombaAPI):
         self.recognize_line()
         # self.dataanalysis()
         self.sock = sock
-        time.sleep(2)
-        self.backward()
-        time.sleep(1)
-        self.stop()
         # self.wimg = cv2.imread("../face.png",0)
         self.go()
 
@@ -78,29 +74,28 @@ class HurryAPI(RoombaAPI):
             if key == 'a':
                 print "goleft"
                 now_status = "left"
-                self.turn(LEFT, 10, 100)
+                self.turn_corner(LEFT)
             elif key == 'd':
-                self.turn(RIGHT, 10, 100)
+                self.turn_corner(RIGHT)
                 now_status = "right"
             elif key == 'w':
                 print "gostraight"
                 now_status = "straight"
                 self.drive_direct(self.speed, self.speed)
-            elif key == 'x':
-                print "speed up"
-                now_status = "speedup"
-                self.speed_up()
-            elif key == 'z':
-                print "speed down"
-                now_status = "speeddown"
-                self.speed_down()
+            # elif key == 'c':
+            #     print "speed up"
+            #     now_status = "speedup"
+            #     self.speed_up()
+            # elif key == 'z':
+            #     print "speed down"
+            #     now_status = "speeddown"
+            #     self.speed_down()
                 # self.front(xb1, xb2)
             elif key == 's':
                 print 'pause'
-                now_status = "pause"
-            elif key == 'c':
                 self.drive_direct(0,0)
-            elif key == 'q':
+                now_status = "pause"
+            elif key == 'j':
                 print 'bye'
                 sys.exit()
             # print self.clf.predict([[xa1, xa2, xb1, xb2]])
@@ -127,39 +122,39 @@ class HurryAPI(RoombaAPI):
         self.drive_direct(self.now_R - reduce_speed, self.now_L - reduce_speed)
         time.sleep(0.3)
 
-    def front(self, xb1, xb2):
-        # 手前の縦線で直進を判断
-        # if (xb1 < self.im_w - xb2):
-        #     print "adjust_left"
-        #     self.adjust(LEFT)
-        # elif (xb1 > self.im_w - xb2):
-        #     print "adjust_right"
-        #     self.adjust(RIGHT)
-        # else:
-        #     print "go_straight"
-        #     self.drive_direct(self.speed, self.speed)
-        self.drive_direct(self.speed, self.speed)
+    # def front(self, xb1, xb2):
+    #     手前の縦線で直進を判断
+    #     if (xb1 < self.im_w - xb2):
+    #         print "adjust_left"
+    #         self.adjust(LEFT)
+    #     elif (xb1 > self.im_w - xb2):
+    #         print "adjust_right"
+    #         self.adjust(RIGHT)
+    #     else:
+    #         print "go_straight"
+    #         self.drive_direct(self.speed, self.speed)
+    #     self.drive_direct(self.speed, self.speed)
 
     def adjust(self, direction):
         self.drive_direct(self.speed - 30 - 30 * RIGHT * direction,
                           self.speed - 30 - 30 * LEFT * direction)
 
-    def turn_corner(self, xa1, xa2):
-        # 横線の有無で回転の有無を判断
-        # 奥の縦線で回転方向を判断
-        if self.line_w():
-            if xa1 < 0:
-                # 左に曲がる
-                print "turn_corner left"
-                self.turn_cornerb(LEFT)
-            elif xa2 < 0:
-                # 右に曲がる
-                print "turn_corner right"
-                self.turn_cornerb(RIGHT)
+    # def turn_corner(self, xa1, xa2):
+    #     # 横線の有無で回転の有無を判断
+    #     # 奥の縦線で回転方向を判断
+    #     if self.line_w():
+    #         if xa1 < 0:
+    #             # 左に曲がる
+    #             print "turn_corner left"
+    #             self.turn_cornerb(LEFT)
+    #         elif xa2 < 0:
+    #             # 右に曲がる
+    #             print "turn_corner right"
+    #             self.turn_cornerb(RIGHT)
 
-    def turn_cornerb(self, direction):
+    def turn_corner(self, direction):
         # 仮に、ルンバから横に100mmの位置を中心として85度回転するように設定した
-        self.turn(direction, 85, 100)
+        self.turn(direction, 10, 30)
 
     def turn(self, direction, angle, distance):
         # distanceは内側のタイヤと回転の中心との距離
