@@ -8,7 +8,7 @@ from contextlib import closing
 
 def main():
     # ルンバの接続の初期化
-    port = "/dev/cu.usbserial-A2001n4D" #ここは各自で違う！
+    port = "/dev/cu.usbserial-A2001mJ7" #ここは各自で違う！
     baudrate = 115200
 
     x = RoombaAPI(port, baudrate)
