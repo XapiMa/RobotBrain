@@ -55,7 +55,8 @@ class HurryAPI(RoombaAPI):
         now_status = "pause"
         bufsize = 4096
         while True:
-            xa1, xa2, xb1, xb2 = self.recognize_line()
+            xas = self.recognize_line()
+            xas = self.line_pos((200, 350), 200, None)
             # self.turn_corner(xa1, xa2)
             time.sleep(0.01)
             # 画面描画
@@ -104,7 +105,7 @@ class HurryAPI(RoombaAPI):
                 sys.exit()
             # print self.clf.predict([[xa1, xa2, xb1, xb2]])
 
-            print >> self.f_obj , now_status,xa1,xa2,xb1,xb2
+            print >> self.f_obj+","+now_status+","+",".join(xas)
 
     def speed_up(self):
         add_speed = SPAN
@@ -184,74 +185,66 @@ class HurryAPI(RoombaAPI):
         #     self.recognize_line()
         #     time.sleep(limit / 11.0)
 
-    def recognize_line(self):
-        # 各座標の取得・表示・画面描画を行う
-        xa1, xa2, xb1, xb2 = self.line_pos(200, 350, 200, None)
-        print xa1, xa2, xb1, xb2, self.im_w
-        return xa1, xa2, xb1, xb2
+    # def recognize_line(self):
+    #     # 各座標の取得・表示・画面描画を行う
+    #     xa1, xa2, xb1, xb2 = self.line_pos((200, 350), 200, None)
+    #     print xa1, xa2, xb1, xb2, self.im_w
+    #     return xa1, xa2, xb1, xb2
 
     def line_w(self):
         # 曲がると判断する位置に横線があればTrueを、なければFalseを返す
         return True
 
-    def line_pos(self, ya, yb, thd, im=None):
+    def line_pos(self, ya,  thd, im=None):
         errorCode, image = self.cap.read()
         # errorCode, resolution, image = vrep.simxGetVisionSensorImage(
         #     self.clientID, self.cam_handle, 0, vrep.simx_opmode_streaming)
-
+        yoko = []
+        xas = []
         if errorCode == True:
             im = np.array(image, dtype=np.uint8)         # numpy に変換
             # im.resize([resolution[0], resolution[1], 3])  # サイズを変換
             im = cv2.cvtColor(im, cv2.COLOR_RGB2BGR)     # 色を変換 RGB -> BGR
             im = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
             image = im.copy()
-            yoko_a = image[ya, :]
-            yoko_b = image[yb, :]
+            yoko[0] = image[ya[0], :]
+            yoko[1] = image[ya[1], :]
+            tate[0] = image[ya[0],:]
+            tate[1] = image[ya[1],:]
 
             xmax = image.shape[1]
             xmid = xmax / 2
             # print xmax, xmid
+            for i in range(4):
+                if np.max(yoko[0][0:xmid]) < thd:
+                    xas[i*2] = -1
+                else:
+                    xas[i*2] = np.argmax(yoko[0][0:xmid])
 
-            if np.max(yoko_a[0:xmid]) < thd:
-                xa1 = -1
-            else:
-                xa1 = np.argmax(yoko_a[0:xmid])
+                if np.max(yoko[i][xmid:xmax]) < thd:
+                    xas[i*2+1] = 641
+                    # xa2 = -1
+                else:
+                    xas[i*2+1] = np.argmax(yoko[i][xmid:xmax]) + xmid
 
-            if np.max(yoko_a[xmid:xmax]) < thd:
-                xa2 = 641
-                # xa2 = -1
-            else:
-                xa2 = np.argmax(yoko_a[xmid:xmax]) + xmid
-
-            if np.max(yoko_b[0:xmid]) < thd:
-                xb1 = -1
-            else:
-                xb1 = np.argmax(yoko_b[0:xmid])
-
-            if np.max(yoko_b[xmid:xmax]) < thd:
-                xb2 = 641
-                # xb2 = -1
-            else:
-                xb2 = np.argmax(yoko_b[xmid:xmax]) + xmid
 
             # draw line
-            cv2.line(image, (0, ya), (xmax, ya), 100, 2)
-            cv2.line(image, (0, yb), (xmax, yb), 100, 2)
+            for i in range(4):
 
-            if xa1 != -1:
-                cv2.circle(image, (xa1, ya), 10, 100, -1)
-            if xa2 != 641:
-                cv2.circle(image, (xa2, ya), 10, 100, -1)
-            if xb1 != -1:
-                cv2.circle(image, (xb1, yb), 10, 100, -1)
-            if xb2 != 641:
-                cv2.circle(image, (xb2, yb), 10, 100, -1)
+                cv2.line(image, (0, ya[i]), (xmax, ya[i]), 100, 2)
+
+                if xas[i*2]
+                ] != -1:
+                    cv2.circle(image, (xa1, ya[i]), 10, 100, -1)
+                if xas[i*2] != 641:
+                    cv2.circle(image, (xa2, ya[i]), 10, 100, -1)
+
             self.im_h = image.shape[0]
             self.im_w = image.shape[1]
             self.im = image
             self.show_im()
 
-            return xa1, xa2, xb1, xb2
+            return xas
 
         else:
             return -2, -2, -2, -2
