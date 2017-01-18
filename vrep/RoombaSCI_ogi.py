@@ -306,7 +306,7 @@ class RoombaAPI(object):
         self.port.timeout = 10
         if (self.port.isOpen() == False):
             self.port.open()
-            
+
     def connect(self):
         # XXX(Jflesch): Don't set rootooth baudrate here. Roomba don't have all the same
         # default baudrate. For instance, the original author had a baudrate of
@@ -424,7 +424,7 @@ class RoombaAPI(object):
             vel_R.high_byte(),
             vel_R.low_byte(),
             vel_L.high_byte(),
-            vel_L.high_byte()
+            vel_L.low_byte()
             ])
 
     def forward(self):
