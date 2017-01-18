@@ -228,11 +228,10 @@ class HurryAPI(RoombaAPI):
 
                 cv2.line(image, (0, ya[i]), (xmax, ya[i]), 100, 2)
 
-                if xas[i*2]
-                ] != -1:
-                    cv2.circle(image, (xa1, ya[i]), 10, 100, -1)
-                if xas[i*2] != 641:
-                    cv2.circle(image, (xa2, ya[i]), 10, 100, -1)
+                if xas[i*2] != -1:
+                    cv2.circle(image, (xas[i*2], ya[i]), 10, 100, -1)
+                if xas[i*2+1] != 641:
+                    cv2.circle(image, (xas[i*2+1], ya[i]), 10, 100, -1)
 
             self.im_h = image.shape[0]
             self.im_w = image.shape[1]
