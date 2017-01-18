@@ -52,7 +52,7 @@ class HurryAPI(RoombaAPI):
         bufsize = 4096
         while True:
             xas = self.recognize_line()
-            xas = self.line_pos((200, 350), 200, None)
+            xas = self.line_pos((200, 350,270,380), 200, None)
             # self.turn_corner(xa1, xa2)
             time.sleep(0.01)
             # 画面描画
@@ -194,22 +194,22 @@ class HurryAPI(RoombaAPI):
         errorCode, image = self.cap.read()
         # errorCode, resolution, image = vrep.simxGetVisionSensorImage(
         #     self.clientID, self.cam_handle, 0, vrep.simx_opmode_streaming)
-        yoko = []
-        xas = []
+        yoko = [None,None,None,None]
+        tate = [None,None,None,None]
+        xas = [i for i in range(8)]
         if errorCode == True:
             im = np.array(image, dtype=np.uint8)         # numpy に変換
             # im.resize([resolution[0], resolution[1], 3])  # サイズを変換
             im = cv2.cvtColor(im, cv2.COLOR_RGB2BGR)     # 色を変換 RGB -> BGR
             im = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
             image = im.copy()
-            yoko[0] = image[ya[0], :]
-            yoko[1] = image[ya[1], :]
-            tate[0] = image[ya[0],:]
-            tate[1] = image[ya[1],:]
-
+            for i in range(4):
+                yoko[i] = image[ya[i], :]
             xmax = image.shape[1]
             xmid = xmax / 2
-            # print xmax, xmid
+            ymax = image.shape[0]
+            ymid = ymax/2
+
             for i in range(4):
                 if np.max(yoko[0][0:xmid]) < thd:
                     xas[i*2] = -1
