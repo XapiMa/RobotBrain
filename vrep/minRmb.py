@@ -35,7 +35,7 @@ class HurryAPI(RoombaAPI):
         self.im_h = 0
         self.im_w = 0
         self.name = name
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(1)
         self.cap.set(3, 640)  # カメラの横のサイズ
         self.cap.set(4, 480)  # カメラの縦のサイズ
         self.clf = tree.DecisionTreeClassifier(max_depth=4)
@@ -44,10 +44,6 @@ class HurryAPI(RoombaAPI):
         self.recognize_line()
         # self.dataanalysis()
         self.sock = sock
-        time.sleep(2)
-        self.backward()
-        time.sleep(1)
-        self.stop()
         # self.wimg = cv2.imread("../face.png",0)
         self.go()
 

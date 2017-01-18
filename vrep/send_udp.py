@@ -7,7 +7,7 @@ import getch
 
 def main():
     # host = '172.29.151.214'
-    host = '127.0.0.1'
+    host = '172.29.143.76'
     port = 5800
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     with closing(sock):
@@ -17,7 +17,7 @@ def main():
             if message == 'e':
                 break
             sock.sendto(message, (host, port))
-        time.sleep(1)
+        time.sleep(0.1)
     return
 
 if __name__ == '__main__':
