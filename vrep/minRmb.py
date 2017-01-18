@@ -211,7 +211,7 @@ class HurryAPI(RoombaAPI):
             ymid = ymax/2
 
             for i in range(4):
-                if np.max(yoko[0][0:xmid]) < thd:
+                if np.max(yoko[i][0:xmid]) < thd:
                     xas[i*2] = -1
                 else:
                     xas[i*2] = np.argmax(yoko[0][0:xmid])
