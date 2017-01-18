@@ -153,7 +153,7 @@ class HurryAPI(RoombaAPI):
 
     def turn_corner(self, direction):
         # 仮に、ルンバから横に100mmの位置を中心として85度回転するように設定した
-        self.turn(direction, 10, 30)
+        self.turn(direction, 10, 50)
 
     def turn(self, direction, angle, distance):
         # distanceは内側のタイヤと回転の中心との距離
