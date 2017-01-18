@@ -85,11 +85,11 @@ class HurryAPI(RoombaAPI):
                 print "gostraight"
                 now_status = "straight"
                 self.drive_direct(self.speed, self.speed)
-            elif key == 'z':
+            elif key == 'x':
                 print "speed up"
                 now_status = "speedup"
                 self.speed_up()
-            elif key == 'x':
+            elif key == 'z':
                 print "speed down"
                 now_status = "speeddown"
                 self.speed_down()
@@ -121,7 +121,7 @@ class HurryAPI(RoombaAPI):
         min_speed = self.now_R
         if min_speed > self.now_L:
             min_speed = self.now_L
-        if min_speed + reduce_speed < 0:
+        if min_speed - reduce_speed < 0:
             reduce_speed = min_speed
         self.drive_direct(self.now_R - reduce_speed, self.now_L - reduce_speed)
         time.sleep(0.3)
