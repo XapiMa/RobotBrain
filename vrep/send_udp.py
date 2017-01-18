@@ -14,7 +14,7 @@ def main():
         while True:
             message = getch.getch()
             print(message)
-            if message == 'e':
+            if message == 'k':
                 break
             sock.sendto(message, (host, port))
         time.sleep(0.1)

@@ -81,20 +81,20 @@ class HurryAPI(RoombaAPI):
                 print "gostraight"
                 now_status = "straight"
                 self.drive_direct(self.speed, self.speed)
-            elif key == 'c':
-                print "speed up"
-                now_status = "speedup"
-                self.speed_up()
-            elif key == 'z':
-                print "speed down"
-                now_status = "speeddown"
-                self.speed_down()
+            # elif key == 'c':
+            #     print "speed up"
+            #     now_status = "speedup"
+            #     self.speed_up()
+            # elif key == 'z':
+            #     print "speed down"
+            #     now_status = "speeddown"
+            #     self.speed_down()
                 # self.front(xb1, xb2)
             elif key == 's':
                 print 'pause'
                 self.drive_direct(0,0)
                 now_status = "pause"
-            elif key == 'q':
+            elif key == 'j':
                 print 'bye'
                 sys.exit()
             # print self.clf.predict([[xa1, xa2, xb1, xb2]])
