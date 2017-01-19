@@ -17,7 +17,6 @@ RIGHT = -1
 LEFT = 1
 SPAN = 200
 
-
 class HurryAPI(RoombaAPI):
 
     def __init__(self, name, param, r_port, r_baudrate, sock):
