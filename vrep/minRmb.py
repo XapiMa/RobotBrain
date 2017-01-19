@@ -24,6 +24,8 @@ class HurryAPI(RoombaAPI):
         super(HurryAPI, self).__init__("/dev/cu.usbserial-A2001mJ7", 115200)
         self.start()
         self.full()
+        # 学習時にはTrue 評価時にはFalse
+        self.learnFlag = False
 
         print self.port
         self.now_R = 0
@@ -39,12 +41,19 @@ class HurryAPI(RoombaAPI):
         self.cap.set(3, 640)  # カメラの横のサイズ
         self.cap.set(4, 480)  # カメラの縦のサイズ
         self.clf = tree.DecisionTreeClassifier(max_depth=4)
+<<<<<<< HEAD
         #self.f_obj = open("data.txt","w")
         cv2.namedWindow(self.name)
         # self.recognize_line()
         #self.dataanalysis()
+=======
+        if self.learnFlag:
+            self.f_obj = open("data.txt","w")
+        cv2.namedWindow(self.name)
+        if not self.learnFlag:
+            self.dataanalysis()
+>>>>>>> c988937a0f4a303a3e12ac764c1d293f5b84c168
         self.sock = sock
-        # self.wimg = cv2.imread("../face.png",0)
         self.go()
 
     def go(self):
@@ -64,8 +73,14 @@ class HurryAPI(RoombaAPI):
                 key = self.sock.recv(bufsize)
             except socket.error:
                 pass
+<<<<<<< HEAD
             if flag == True:
                 textkey = self.clf.predict([[xas]])
+=======
+            if not learnFlag:
+                print xas
+                textkey = self.clf.predict([xas])
+>>>>>>> c988937a0f4a303a3e12ac764c1d293f5b84c168
                 if textkey == "left":
                     key = 'a'
                 elif textkey == "right":
@@ -99,8 +114,15 @@ class HurryAPI(RoombaAPI):
             elif key == 'j':
                 print 'bye'
                 sys.exit()
+<<<<<<< HEAD
             # print self.clf.predict([[xa1, xa2, xb1, xb2]])
             #print >> self.f_obj,now_status+","+str(xas[0])+","+str(xas[1])+","+str(xas[2])+","+str(xas[3])+","+str(xas[4])+","+str(xas[5])+","+str(xas[6])+","+str(xas[7])
+=======
+            if not learnFlag:
+                s_xas = map(str,xas)
+                print >> self.f_obj,now_status+","+",".join(xas)
+                # print >> self.f_obj,now_status+","+str(xas[0])+","+str(xas[1])+","+str(xas[2])+","+str(xas[3])+","+str(xas[4])+","+str(xas[5])+","+str(xas[6])+","+str(xas[7])
+>>>>>>> c988937a0f4a303a3e12ac764c1d293f5b84c168
 
     def speed_up(self):
         add_speed = SPAN
@@ -122,35 +144,9 @@ class HurryAPI(RoombaAPI):
         self.drive_direct(self.now_R - reduce_speed, self.now_L - reduce_speed)
         time.sleep(0.3)
 
-    # def front(self, xb1, xb2):
-    #     手前の縦線で直進を判断
-    #     if (xb1 < self.im_w - xb2):
-    #         print "adjust_left"
-    #         self.adjust(LEFT)
-    #     elif (xb1 > self.im_w - xb2):
-    #         print "adjust_right"
-    #         self.adjust(RIGHT)
-    #     else:
-    #         print "go_straight"
-    #         self.drive_direct(self.speed, self.speed)
-    #     self.drive_direct(self.speed, self.speed)
-
     def adjust(self, direction):
         self.drive_direct(self.speed - 30 - 30 * RIGHT * direction,
                           self.speed - 30 - 30 * LEFT * direction)
-
-    # def turn_corner(self, xa1, xa2):
-    #     # 横線の有無で回転の有無を判断
-    #     # 奥の縦線で回転方向を判断
-    #     if self.line_w():
-    #         if xa1 < 0:
-    #             # 左に曲がる
-    #             print "turn_corner left"
-    #             self.turn_cornerb(LEFT)
-    #         elif xa2 < 0:
-    #             # 右に曲がる
-    #             print "turn_corner right"
-    #             self.turn_cornerb(RIGHT)
 
     def turn_corner(self, direction):
         # 仮に、ルンバから横に100mmの位置を中心として85度回転するように設定した
@@ -175,16 +171,6 @@ class HurryAPI(RoombaAPI):
             lSP = 0
             rSP = 0
         self.drive_direct(self.speed * rSP, self.speed * lSP)
-        # 回転しながら画面描画をするため、回転時間を10に分割して画面描画(recognize_line)を行っている
-        # for i in range(10):
-        #     self.recognize_line()
-        #     time.sleep(limit / 11.0)
-
-    # def recognize_line(self):
-    #     # 各座標の取得・表示・画面描画を行う
-    #     xa1, xa2, xb1, xb2 = self.line_pos((200, 350), 200, None)
-    #     print xa1, xa2, xb1, xb2, self.im_w
-    #     return xa1, xa2, xb1, xb2
 
     def line_w(self):
         # 曲がると判断する位置に横線があればTrueを、なければFalseを返す
@@ -243,9 +229,6 @@ class HurryAPI(RoombaAPI):
         else:
             return -2, -2, -2, -2
 
-    def show_im(self):
-        cv2.imshow(self.name, self.im)
-        # cv2.waitKey(1)# 1/1000秒入力を待ち受ける。これがないと画面が描画されない
 
     def drive_direct(self, vel_right, vel_left):
         # 指定した速度で走る
