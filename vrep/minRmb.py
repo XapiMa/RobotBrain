@@ -67,6 +67,7 @@ class HurryAPI(RoombaAPI):
             except socket.error:
                 pass
             if not learnFlag:
+                print xas
                 textkey = self.clf.predict([xas])
                 if textkey == "left":
                     key = 'a'
@@ -102,7 +103,6 @@ class HurryAPI(RoombaAPI):
                 print 'bye'
                 sys.exit()
             if not learnFlag:
-                print self.clf.predict([[xa1, xa2, xb1, xb2]])
                 s_xas = map(str,xas)
                 print >> self.f_obj,now_status+","+",".join(xas)
                 # print >> self.f_obj,now_status+","+str(xas[0])+","+str(xas[1])+","+str(xas[2])+","+str(xas[3])+","+str(xas[4])+","+str(xas[5])+","+str(xas[6])+","+str(xas[7])
