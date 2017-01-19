@@ -7,7 +7,7 @@ import getch
 
 def main():
     # host = '172.29.151.214'
-    host = '172.29.143.76'
+    host = '172.29.165.193'
     port = 5800
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     with closing(sock):
