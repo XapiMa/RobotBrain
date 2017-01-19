@@ -8,6 +8,8 @@ import minRmb
 # 学校のMac環境なら275が妥当。回転しすぎるなら大きく、回転不足なら小さくする
 
 r_port = "/dev/cu.usbserial-A2001mJ7" #ここは各自で違う！
+#1r_port ="/dev/cu.usbserial-A2001mXk"
+#
 r_baudrate = 115200
 
 param =1000

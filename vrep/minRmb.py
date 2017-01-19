@@ -17,13 +17,15 @@ RIGHT = -1
 LEFT = 1
 SPAN = 200
 
+
 class HurryAPI(RoombaAPI):
 
     def __init__(self, name, param, r_port, r_baudrate, sock):
-        super(HurryAPI, self).__init__("/dev/cu.usbserial-A2001mJ7", 115200)
+        super(HurryAPI, self).__init__(r_port, 115200)
         self.start()
         self.full()
         # 学習時にはTrue 評価時にはFalse
+        # self.learnFlag = True
         self.learnFlag = False
 
         print self.port
@@ -39,19 +41,14 @@ class HurryAPI(RoombaAPI):
         self.cap = cv2.VideoCapture(1)
         self.cap.set(3, 640)  # カメラの横のサイズ
         self.cap.set(4, 480)  # カメラの縦のサイズ
-        self.clf = tree.DecisionTreeClassifier(max_depth=4)
-<<<<<<< HEAD
-        #self.f_obj = open("data.txt","w")
-        cv2.namedWindow(self.name)
-        # self.recognize_line()
-        #self.dataanalysis()
-=======
+        self.clf = tree.DecisionTreeClassifier(max_depth=6)
         if self.learnFlag:
-            self.f_obj = open("data.txt","w")
+            self.f_obj = open("data9.txt","a")
+            #print >> self.f_obj,"status,xa1,xa2,xb1,xb2,xc1,xc2,xd1,xd2"
+
         cv2.namedWindow(self.name)
         if not self.learnFlag:
             self.dataanalysis()
->>>>>>> c988937a0f4a303a3e12ac764c1d293f5b84c168
         self.sock = sock
         self.go()
 
@@ -61,31 +58,30 @@ class HurryAPI(RoombaAPI):
         flag = True
         while True:
             # xas = self.recognize_line()
-            xas = self.line_pos((100, 250,300,400), 190, None)
+            xas = self.line_pos((100,200,300,400,320+100,320-100), 190, None)
             # self.turn_corner(xa1, xa2)
             time.sleep(0.01)
             # 画面描画
             key = cv2.waitKey(1)
             # cv2.imshow('image',self.wimg)
 
-            try:
-                key = self.sock.recv(bufsize)
-            except socket.error:
-                pass
-<<<<<<< HEAD
-            if flag == True:
-                textkey = self.clf.predict([[xas]])
-=======
-            if not learnFlag:
+            if not self.learnFlag:
                 print xas
-                textkey = self.clf.predict([xas])
->>>>>>> c988937a0f4a303a3e12ac764c1d293f5b84c168
+                # txa = xas[2:8]
+                # txa.append(xas[10])
+                # txa.append(xas[11])
+                textkey = self.clf.predict(xas)
                 if textkey == "left":
                     key = 'a'
                 elif textkey == "right":
                     key = 'd'
                 elif textkey == "straight":
                     key = 'w'
+            try:
+                key = self.sock.recv(bufsize)
+            except socket.error:
+                pass
+
             if key == 'a':
                 print "goleft"
                 now_status = "left"
@@ -112,16 +108,13 @@ class HurryAPI(RoombaAPI):
                 now_status = "pause"
             elif key == 'j':
                 print 'bye'
+                self.drive_direct(0,0)
                 sys.exit()
-<<<<<<< HEAD
-            # print self.clf.predict([[xa1, xa2, xb1, xb2]])
-            #print >> self.f_obj,now_status+","+str(xas[0])+","+str(xas[1])+","+str(xas[2])+","+str(xas[3])+","+str(xas[4])+","+str(xas[5])+","+str(xas[6])+","+str(xas[7])
-=======
-            if not learnFlag:
+            if self.learnFlag:
                 s_xas = map(str,xas)
-                print >> self.f_obj,now_status+","+",".join(xas)
-                # print >> self.f_obj,now_status+","+str(xas[0])+","+str(xas[1])+","+str(xas[2])+","+str(xas[3])+","+str(xas[4])+","+str(xas[5])+","+str(xas[6])+","+str(xas[7])
->>>>>>> c988937a0f4a303a3e12ac764c1d293f5b84c168
+                print >> self.f_obj,now_status+","+",".join(s_xas)
+                #print >> self.f_obj,now_status+","+str(xas[0])+","+str(xas[1])+","+str(xas[2])+","+str(xas[3])+","+str(xas[4])+","+str(xas[5])+","+str(xas[6])+","+str(xas[7])
+                #print >> self.f_obj,now_status+","+str(xas[0])+","+str(xas[1])+","+str(xas[2])+","+str(xas[3])+","+str(xas[4])
 
     def speed_up(self):
         add_speed = SPAN
@@ -179,9 +172,9 @@ class HurryAPI(RoombaAPI):
         errorCode, image = self.cap.read()
         # errorCode, resolution, image = vrep.simxGetVisionSensorImage(
         #     self.clientID, self.cam_handle, 0, vrep.simx_opmode_streaming)
-        yoko = [None,None,None,None]
+        yoko = [None,None,None,None,None,None,None,None]
         tate = [None,None,None,None]
-        xas = [i for i in range(8)]
+        xas = [i for i in range(12)]
         if errorCode == True:
             im = np.array(image, dtype=np.uint8)         # numpy に変換
             # im.resize([resolution[0], resolution[1], 3])  # サイズを変換
@@ -192,8 +185,7 @@ class HurryAPI(RoombaAPI):
                 yoko[i] = image[ya[i], :]
             xmax = image.shape[1]
             xmid = xmax / 2
-            ymax = image.shape[0]
-            ymid = ymax/2
+
 
             for i in range(4):
                 if np.max(yoko[i][0:xmid]) < thd:
@@ -217,11 +209,40 @@ class HurryAPI(RoombaAPI):
                     cv2.circle(image, (xas[i*2], ya[i]), 10, 100, -1)
                 if xas[i*2+1] != 641:
                     cv2.circle(image, (xas[i*2+1], ya[i]), 10, 100, -1)
+            if len(ya)>4:
+                for j in range(2):
+                    i = j+4
+                    yoko[i] = image[:,ya[i]]
+                ymax = image.shape[0]
+                ymid = ymax/2
+                for j in range(2):
+                    i = j+4
+                    if np.max(yoko[i][0:ymid]) < thd:
+                        xas[i*2] = -1
+                    else:
+                        xas[i*2] = np.argmax(yoko[i][0:ymid])
 
+                    if np.max(yoko[i][ymid:ymax]) < thd:
+                        xas[i*2+1] = 481
+                        # xa2 = -1
+                    else:
+                        xas[i*2+1] = np.argmax(yoko[i][ymid:ymax]) + ymid
+
+
+                # draw line
+                for j in range(2):
+                    i = j+4
+                    cv2.line(image, (ya[i], 0), (ya[i],ymax), 100, 2)
+
+                    if xas[i*2] != -1:
+                        cv2.circle(image, (ya[i],xas[i*2]), 10, 100, -1)
+                    if xas[i*2+1] != 641:
+                        cv2.circle(image, (ya[i],xas[i*2+1]), 10, 100, -1)
             self.im_h = image.shape[0]
             self.im_w = image.shape[1]
             self.im = image
-            self.show_im()
+            #self.show_im()
+            cv2.imshow(self.name,self.im)
 
             return xas
 
@@ -247,10 +268,10 @@ class HurryAPI(RoombaAPI):
             self.now_L = -500
 
     def dataanalysis(self):
-        dataset = pd.read_csv("data.txt")
+        dataset = pd.read_csv("data9.txt")
         # dataset = dataset.drop_duplicates()
-        data = dataset[["xa1", "xa2", "xb1", "xb2","xc1","xc2","xd1","xd2"]]
+        data = dataset[["xa1","xa2","xb1", "xb2","xc1","xc2","xd1","xd2","ya1","ya2","yb1","yb2"]]
         target = dataset["status"]
         target.value_counts()
-        self.clf = tree.DecisionTreeClassifier(max_depth=4)
+        self.clf = tree.DecisionTreeClassifier(max_depth=6)
         self.clf = self.clf.fit(data, target)
