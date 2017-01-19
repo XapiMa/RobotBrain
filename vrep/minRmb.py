@@ -40,11 +40,18 @@ class HurryAPI(RoombaAPI):
         self.cap.set(3, 640)  # カメラの横のサイズ
         self.cap.set(4, 480)  # カメラの縦のサイズ
         self.clf = tree.DecisionTreeClassifier(max_depth=4)
+<<<<<<< HEAD
+        #self.f_obj = open("data.txt","w")
+        cv2.namedWindow(self.name)
+        # self.recognize_line()
+        #self.dataanalysis()
+=======
         if self.learnFlag:
             self.f_obj = open("data.txt","w")
         cv2.namedWindow(self.name)
         if not self.learnFlag:
             self.dataanalysis()
+>>>>>>> c988937a0f4a303a3e12ac764c1d293f5b84c168
         self.sock = sock
         self.go()
 
@@ -65,8 +72,14 @@ class HurryAPI(RoombaAPI):
                 key = self.sock.recv(bufsize)
             except socket.error:
                 pass
+<<<<<<< HEAD
+            if flag == True:
+                textkey = self.clf.predict([[xas]])
+=======
             if not learnFlag:
+                print xas
                 textkey = self.clf.predict([xas])
+>>>>>>> c988937a0f4a303a3e12ac764c1d293f5b84c168
                 if textkey == "left":
                     key = 'a'
                 elif textkey == "right":
@@ -100,11 +113,15 @@ class HurryAPI(RoombaAPI):
             elif key == 'j':
                 print 'bye'
                 sys.exit()
+<<<<<<< HEAD
+            # print self.clf.predict([[xa1, xa2, xb1, xb2]])
+            #print >> self.f_obj,now_status+","+str(xas[0])+","+str(xas[1])+","+str(xas[2])+","+str(xas[3])+","+str(xas[4])+","+str(xas[5])+","+str(xas[6])+","+str(xas[7])
+=======
             if not learnFlag:
-                print self.clf.predict([[xa1, xa2, xb1, xb2]])
                 s_xas = map(str,xas)
                 print >> self.f_obj,now_status+","+",".join(xas)
                 # print >> self.f_obj,now_status+","+str(xas[0])+","+str(xas[1])+","+str(xas[2])+","+str(xas[3])+","+str(xas[4])+","+str(xas[5])+","+str(xas[6])+","+str(xas[7])
+>>>>>>> c988937a0f4a303a3e12ac764c1d293f5b84c168
 
     def speed_up(self):
         add_speed = SPAN

@@ -14,7 +14,7 @@ param =1000
 if len(sys.argv)>=2:
 	param =float(sys.argv[1])
 
-n_host = '172.29.143.76'
+n_host = '172.29.165.193'
 # n_host = '127.0.0.1'
 n_port = 5800
 # bufsize = 4096
